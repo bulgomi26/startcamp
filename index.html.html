@@ -64,10 +64,16 @@
             letter-spacing: -0.05em;
         }
 
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
         nav ul {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 1.75rem;
             align-items: center; 
             margin: 0;
             padding: 0;
@@ -82,7 +88,7 @@
             text-decoration: none;
             color: var(--text-secondary);
             font-weight: 500;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: color 0.2s ease;
             display: inline-flex;
             align-items: center;
@@ -93,6 +99,35 @@
 
         nav ul li a:hover {
             color: var(--color-primary);
+        }
+
+        /* 다국어 언어 스위치 버튼 캡슐 디자인 */
+        .lang-switch {
+            display: flex;
+            background-color: var(--border-color);
+            padding: 3px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .lang-btn.active {
+            background-color: var(--color-primary);
+            color: #ffffff;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
         }
 
         section {
@@ -120,6 +155,7 @@
             background-color: var(--color-accent);
         }
 
+        /* 히어로 테크 디자인 */
         #hero {
             height: calc(100vh - var(--header-height)); 
             margin-top: var(--header-height);          
@@ -152,7 +188,6 @@
             z-index: 2;
         }
 
-        /* 히어로 CTA 버튼 그룹 */
         .hero-buttons {
             display: flex;
             gap: 1rem;
@@ -215,12 +250,28 @@
             margin-top: 1rem;
         }
 
-        @media (max-width: 768px) {
-            .grid-container {
-                grid-template-columns: 1fr;
+        @media (max-width: 900px) {
+            header {
+                flex-direction: column;
+                height: auto;
+                padding: 1rem;
+                gap: 0.75rem;
+            }
+            .nav-container {
+                flex-direction: column;
+                gap: 0.75rem;
+                width: 100%;
+            }
+            nav ul {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
             }
             #hero {
                 padding: 0 2rem;
+                height: auto;
+                padding-top: 5rem;
+                padding-bottom: 5rem;
             }
             #hero h1 {
                 font-size: 2.5rem;
@@ -231,6 +282,12 @@
             }
             .btn {
                 width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -248,7 +305,6 @@
             color: var(--color-primary);
         }
 
-        /* 철학 강조 하이라이트 박스 */
         .philosophy-highlight {
             background-color: #eff6ff;
             border-left: 4px solid var(--color-primary);
@@ -263,7 +319,6 @@
             font-size: 1rem;
         }
 
-        /* 파이프라인 프로세스 구조 */
         .pipeline-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -317,85 +372,94 @@
 
     <header>
         <div class="logo">DE. PORTFOLIO</div>
-        <nav>
-            <ul>
-                <li><a href="#hero">소개</a></li>
-                <li><a href="#problem">철학 & 문제의식</a></li>
-                <li><a href="#pipeline">프로세스</a></li>
-                <li><a href="#strengths">강점</a></li>
-                <li><a href="#contact">연락하기</a></li>
-            </ul>
-        </nav>
+        <div class="nav-container">
+            <nav>
+                <ul>
+                    <li><a href="#hero" data-i18n="nav-intro">소개</a></li>
+                    <li><a href="#problem" data-i18n="nav-philosophy">철학 & 문제의식</a></li>
+                    <li><a href="#pipeline" data-i18n="nav-process">프로세스</a></li>
+                    <li><a href="#strengths" data-i18n="nav-strengths">강점</a></li>
+                    <li><a href="#contact" data-i18n="nav-contact">연락하기</a></li>
+                </ul>
+            </nav>
+            <!-- 다국어 캡슐 버튼 -->
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="setLanguage('ko')">KO</button>
+                <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+            </div>
+        </div>
     </header>
 
+    <!-- 1) Hero 섹션 -->
     <section id="hero">
         <canvas id="hero-canvas"></canvas>
-        <h1>물리적 한계를 넘어<br><span style="color: var(--color-accent);">AI로 가속하다</span></h1>
-        <p>현장의 도메인 지식을 이해하고, 노이즈 가득한 실전 데이터 속에서 의미 있는 가치를 정제하여 기업의 수율 개선을 이끄는 신소재 출신 데이터 엔지니어입니다.</p>
+        <h1 data-i18n="hero-title">물리적 한계를 넘어<br><span style="color: var(--color-accent);">AI로 가속하다</span></h1>
+        <p data-i18n="hero-desc">현장의 도메인 지식을 이해하고, 노이즈 가득한 실전 데이터 속에서 의미 있는 가치를 정제하여 기업의 수율 개선을 이끄는 신소재 출신 데이터 엔지니어입니다.</p>
         
-        <!-- 담당자가 즉각 가치관/강점으로 진입할 수 있는 링크 버튼 디자인 -->
         <div class="hero-buttons">
-            <a href="#problem" class="btn btn-primary">💡 엔지니어링 철학 보기</a>
-            <a href="#strengths" class="btn btn-secondary">📊 핵심 강점 & 수율 증명</a>
+            <a href="#problem" class="btn btn-primary" data-i18n="hero-btn-philosophy">💡 엔지니어링 철학 보기</a>
+            <a href="#strengths" class="btn btn-secondary" data-i18n="hero-btn-strengths">📊 핵심 강점 & 수율 증명</a>
         </div>
     </section>
 
+    <!-- 2) Problem 섹션 -->
     <section id="problem">
-        <h2 class="section-title">엔지니어링 철학 & 문제의식</h2>
+        <h2 class="section-title" data-i18n="problem-title">엔지니어링 철학 & 문제의식</h2>
         <div class="grid-container">
             <div class="card">
-                <h3>제조 현장의 원천 데이터 유실 실태</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">도메인을 모르는 상태에서 수집되는 데이터는 노이즈가 심해 80% 이상이 정제되지 못하고 버려집니다. 저는 이 문제를 공학적 직관으로 해결합니다.</p>
+                <h3 data-i18n="problem-card1-title">제조 현장의 원천 데이터 유실 실태</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="problem-card1-desc">도메인을 모르는 상태에서 수집되는 데이터는 노이즈가 심해 80% 이상이 정제되지 못하고 버려집니다. 저는 이 문제를 공학적 직관으로 해결합니다.</p>
                 <div style="position: relative; height:250px; width:100%">
                     <canvas id="problemChart"></canvas>
                 </div>
             </div>
             <div class="card" style="display: flex; flex-direction: column; justify-content: center;">
-                <h3>"현장을 모르면 가짜 데이터를 고른다"</h3>
-                <p style="margin-bottom: 1rem;">실제 공정 레일이나 실험실에서 발생하는 온도, 압력, 격자 구조 변수는 가혹한 물리적 환경에 노출되어 있습니다.</p>
-                <p>저는 신소재공학을 전공하며 물질의 메커니즘을 직접 다뤄봤기에, 어떤 정형/비정형 데이터가 수율 개선에 직결되는 '진짜 신호(Signal)'인지 정밀하게 판별해 낼 수 있습니다.</p>
+                <h3 data-i18n="problem-card2-title">"현장을 모르면 가짜 데이터를 고른다"</h3>
+                <p style="margin-bottom: 1rem;" data-i18n="problem-card2-desc1">실제 공정 레일이나 실험실에서 발생하는 온도, 압력, 격자 구조 변수는 가혹한 물리적 환경에 노출되어 있습니다.</p>
+                <p data-i18n="problem-card2-desc2">저는 신소재공학을 전공하며 물질의 메커니즘을 직접 다뤄봤기에, 어떤 정형/비정형 데이터가 수율 개선에 직결되는 '진짜 신호(Signal)'인지 정밀하게 판별해 낼 수 있습니다.</p>
                 
-                <!-- 담당자가 주목할 핵심 가치관 하이라이트 -->
                 <div class="philosophy-highlight">
-                    <p>"데이터 속에 숨겨진 물리적 개연성을 검증하는 것, 그것이 현장과 디지털 세계를 잇는 제 엔지니어링 철학입니다."</p>
+                    <p data-i18n="problem-highlight">"데이터 속에 숨겨진 물리적 개연성을 검증하는 것, 그것이 현장과 디지털 세계를 잇는 제 엔지니어링 철학입니다."</p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- 3) Pipeline 프로세스 섹션 -->
     <section id="pipeline">
-        <h2 class="section-title">데이터 파이프라인 구축 프로세스</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 1rem;">현장의 원천 데이터를 수집하여 실제 비즈니스 가치로 변환하기 위한 3단계 자동화 아키텍처입니다.</p>
+        <h2 class="section-title" data-i18n="pipeline-title">데이터 파이프라인 구축 프로세스</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;" data-i18n="pipeline-desc">현장의 원천 데이터를 수집하여 실제 비즈니스 가치로 변환하기 위한 3단계 자동화 아키텍처입니다.</p>
         <div class="pipeline-container">
             <div class="step-card">
                 <div class="step-num">01</div>
-                <h3>실시간 수집 및 노이즈 필터링</h3>
-                <p style="font-size: 0.95rem; color: var(--text-secondary); margin-top: 0.5rem;">IoT 센서에서 발생하는 실시간 데이터 스트림을 안정적으로 수집하고, 공학적 도메인 규칙에 기반해 비정상 노이즈를 1차 필터링합니다.</p>
+                <h3 data-i18n="pipeline-step1-title">실시간 수집 및 노이즈 필터링</h3>
+                <p style="font-size: 0.95rem; color: var(--text-secondary); margin-top: 0.5rem;" data-i18n="pipeline-step1-desc">IoT 센서에서 발생하는 실시간 데이터 스트림을 안정적으로 수집하고, 공학적 도메인 규칙에 기반해 비정상 노이즈를 1차 필터링합니다.</p>
             </div>
             <div class="step-card">
                 <div class="step-num">02</div>
-                <h3>견고한 ETL 파이프라인</h3>
-                <p style="font-size: 0.95rem; color: var(--text-secondary); margin-top: 0.5rem;">분석 불가능한 거친 상태의 대용량 데이터를 추출(Extract), 변환(Transform), 적재(Load)하여 클라우드 데이터 웨어하우스에 안정적으로 자동 정제합니다.</p>
+                <h3 data-i18n="pipeline-step2-title">견고한 ETL 파이프라인</h3>
+                <p style="font-size: 0.95rem; color: var(--text-secondary); margin-top: 0.5rem;" data-i18n="pipeline-step2-desc">분석 불가능한 거친 상태의 대용량 데이터를 추출(Extract), 변환(Transform), 적재(Load)하여 클라우드 데이터 웨어하우스에 안정적으로 자동 정제합니다.</p>
             </div>
             <div class="step-card">
                 <div class="step-num">03</div>
-                <h3>AI 기반 수율 예측 및 MLOps</h3>
-                <p style="font-size: 0.95rem; color: var(--text-secondary); margin-top: 0.5rem;">정제된 데이터를 머신러닝 모델에 피딩하여 공정 불량률을 실시간 예측하고, 대시보드 및 알림을 통해 현장의 수율 개선 의사결정을 가속화합니다.</p>
+                <h3 data-i18n="pipeline-step3-title">AI 기반 수율 예측 및 MLOps</h3>
+                <p style="font-size: 0.95rem; color: var(--text-secondary); margin-top: 0.5rem;" data-i18n="pipeline-step3-desc">정제된 데이터를 머신러닝 모델에 피딩하여 공정 불량률을 실시간 예측하고, 대시보드 및 알림을 통해 현장의 수율 개선 의사결정을 가속화합니다.</p>
             </div>
         </div>
     </section>
 
+    <!-- 4) Strengths 섹션 -->
     <section id="strengths">
-        <h2 class="section-title">Core Strengths & Proof</h2>
+        <h2 class="section-title" data-i18n="strengths-title">Core Strengths & Proof</h2>
         <div class="grid-container">
             <div class="card" style="display: flex; flex-direction: column; justify-content: center;">
-                <p style="font-weight: 700; color: var(--color-primary); margin-bottom: 0.5rem;">[도메인 + IT 융합의 시너지]</p>
-                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">수율 개선 중심의 엔지니어링</h3>
-                <p style="margin-bottom: 1rem;">단순히 오류 없는 코드를 작성하는 단계를 넘어, 공정의 병목을 분석하고 파이프라인을 최적화하여 <strong>실제 생산 효율 향상</strong>을 이루는 것을 목적으로 삼습니다.</p>
-                <p>SSAFY에서 검증된 탄탄한 백엔드/데이터 처리 아키텍처 설계 능력을 바탕으로, 대용량 제조 데이터가 막힘없이 흐르는 시스템을 구축합니다.</p>
+                <p style="font-weight: 700; color: var(--color-primary); margin-bottom: 0.5rem;" data-i18n="strengths-tag">[도메인 + IT 융합의 시너지]</p>
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;" data-i18n="strengths-card1-title">수율 개선 중심의 엔지니어링</h3>
+                <p style="margin-bottom: 1rem;" data-i18n="strengths-card1-desc1">단순히 오류 없는 코드를 작성하는 단계를 넘어, 공정의 병목을 분석하고 파이프라인을 최적화하여 <strong>실제 생산 효율 향상</strong>을 이루는 것을 목적으로 삼습니다.</p>
+                <p data-i18n="strengths-card1-desc2">SSAFY에서 검증된 탄탄한 백엔드/데이터 처리 아키텍처 설계 능력을 바탕으로, 대용량 제조 데이터가 막힘없이 흐르는 시스템을 구축합니다.</p>
             </div>
             <div class="card">
-                <h3>엔지니어링 도입 전후 공정 수율 변화 (시뮬레이션)</h3>
+                <h3 data-i18n="strengths-card2-title">엔지니어링 도입 전후 공정 수율 변화 (시뮬레이션)</h3>
                 <div style="position: relative; height:250px; width:100%">
                     <canvas id="yieldChart"></canvas>
                 </div>
@@ -403,16 +467,140 @@
         </div>
     </section>
 
+    <!-- 5) Contact 섹션 -->
     <section id="contact">
-        <h2 class="section-title">연락하기</h2>
+        <h2 class="section-title" data-i18n="contact-title">연락하기</h2>
         <div class="card">
-            <p style="margin-bottom: 1.5rem;">귀사의 수많은 데이터 속에서 보석을 캐내고 공정 파이프라인을 함께 가속하고 싶습니다. 기술 커피챗이나 면접 제안은 언제든 환영합니다.</p>
-            <div class="contact-info">이메일: <span>your_email@example.com</span></div>
-            <div class="contact-info">GitHub: <span>github.com/youridentity</span></div>
+            <p style="margin-bottom: 1.5rem;" data-i18n="contact-desc">귀사의 수많은 데이터 속에서 보석을 캐내고 공정 파이프라인을 함께 가속하고 싶습니다. 기술 커피챗이나 면접 제안은 언제든 환영합니다.</p>
+            <div class="contact-info"><span data-i18n="contact-email">이메일</span>: <span>your_email@example.com</span></div>
+            <div class="contact-info"><span data-i18n="contact-github">GitHub</span>: <span>github.com/youridentity</span></div>
         </div>
     </section>
 
     <script>
+        const translations = {
+            ko: {
+                "nav-intro": "소개",
+                "nav-philosophy": "철학 & 문제의식",
+                "nav-process": "프로세스",
+                "nav-strengths": "강점",
+                "nav-contact": "연락하기",
+                
+                "hero-title": "물리적 한계를 넘어<br><span style='color: var(--color-accent);'>AI로 가속하다</span>",
+                "hero-desc": "현장의 도메인 지식을 이해하고, 노이즈 가득한 실전 데이터 속에서 의미 있는 가치를 정제하여 기업의 수율 개선을 이끄는 신소재 출신 데이터 엔지니어입니다.",
+                "hero-btn-philosophy": "💡 엔지니어링 철학 보기",
+                "hero-btn-strengths": "📊 핵심 강점 & 수율 증명",
+                
+                "problem-title": "엔지니어링 철학 & 문제의식",
+                "problem-card1-title": "제조 현장의 원천 데이터 유실 실태",
+                "problem-card1-desc": "도메인을 모르는 상태에서 수집되는 데이터는 노이즈가 심해 80% 이상이 정제되지 못하고 버려집니다. 저는 이 문제를 공학적 직관으로 해결합니다.",
+                "problem-card2-title": "\"현장을 모르면 가짜 데이터를 고른다\"",
+                "problem-card2-desc1": "실제 공정 레일이나 실험실에서 발생하는 온도, 압력, 격자 구조 변수는 가혹한 물리적 환경에 노출되어 있습니다.",
+                "problem-card2-desc2": "저는 신소재공학을 전공하며 물질의 메커니즘을 직접 다뤄봤기에, 어떤 정형/비정형 데이터가 수율 개선에 직결되는 '진짜 신호(Signal)'인지 정밀하게 판별해 낼 수 있습니다.",
+                "problem-highlight": "\"데이터 속에 숨겨진 물리적 개연성을 검증하는 것, 그것이 현장과 디지털 세계를 잇는 제 엔지니어링 철학입니다.\"",
+                
+                "pipeline-title": "데이터 파이프라인 구축 프로세스",
+                "pipeline-desc": "현장의 원천 데이터를 수집하여 실제 비즈니스 가치로 변환하기 위한 3단계 자동화 아키텍처입니다.",
+                "pipeline-step1-title": "실시간 수집 및 노이즈 필터링",
+                "pipeline-step1-desc": "IoT 센서에서 발생하는 실시간 데이터 스트림을 안정적으로 수집하고, 공학적 도메인 규칙에 기반해 비정상 노이즈를 1차 필터링합니다.",
+                "pipeline-step2-title": "견고한 ETL 파이프라인",
+                "pipeline-step2-desc": "분석 불가능한 거친 상태의 대용량 데이터를 추출(Extract), 변환(Transform), 적재(Load)하여 클라우드 데이터 웨어하우스에 안정적으로 자동 정제합니다.",
+                "pipeline-step3-title": "AI 기반 수율 예측 및 MLOps",
+                "pipeline-step3-desc": "정제된 데이터를 머신러닝 모델에 피딩하여 공정 불량률을 실시간 예측하고, 대시보드 및 알림을 통해 현장의 수율 개선 의사결정을 가속화합니다.",
+                
+                "strengths-title": "Core Strengths & Proof",
+                "strengths-tag": "[도메인 + IT 융합의 시너지]",
+                "strengths-card1-title": "수율 개선 중심의 엔지니어링",
+                "strengths-card1-desc1": "단순히 오류 없는 코드를 작성하는 단계를 넘어, 공정의 병목을 분석하고 파이프라인을 최적화하여 실제 생산 효율 향상을 이루는 것을 목적으로 삼습니다.",
+                "strengths-card1-desc2": "SSAFY에서 검증된 탄탄한 백엔드/데이터 처리 아키텍처 설계 능력을 바탕으로, 대용량 제조 데이터가 막힘없이 흐르는 시스템을 구축합니다.",
+                "strengths-card2-title": "엔지니어링 도입 전후 공정 수율 변화 (시뮬레이션)",
+                
+                "contact-title": "연락하기",
+                "contact-desc": "귀사의 수많은 데이터 속에서 보석을 캐내고 공정 파이프라인을 함께 가속하고 싶습니다. 기술 커피챗이나 면접 제안은 언제든 환영합니다.",
+                "contact-email": "이메일",
+                "contact-github": "GitHub",
+
+                "chart-problem-clean": "정제 후 활용 데이터",
+                "chart-problem-lost": "노이즈로 유실되는 데이터",
+                "chart-yield-label": "파이프라인 및 AI 도입 후 수율 (%)",
+                "chart-weeks": ["1주차", "2주차", "3주차", "4주차", "5주차", "6주차"]
+            },
+            en: {
+                "nav-intro": "Intro",
+                "nav-philosophy": "Philosophy",
+                "nav-process": "Process",
+                "nav-strengths": "Strengths",
+                "nav-contact": "Contact",
+                
+                "hero-title": "Beyond Physical Limits,<br><span style='color: var(--color-accent);'>Accelerated with AI</span>",
+                "hero-desc": "I am a materials science-backed data engineer who understands field domains, cleanses noisy real-world data, and builds robust automated pipelines to drive manufacturing yield optimization.",
+                "hero-btn-philosophy": "💡 View Philosophy",
+                "hero-btn-strengths": "📊 Core Strengths & Yield Proof",
+                
+                "problem-title": "Engineering Philosophy",
+                "problem-card1-title": "Reality of Raw Data Loss in Factories",
+                "problem-card1-desc": "Without domain understanding, over 80% of gathered factory data is discarded due to severe noise. I solve this gap using engineering intuition.",
+                "problem-card2-title": "\"Without understanding the field, you select fake data\"",
+                "problem-card2-desc1": "Temperature, pressure, and lattice structures from production lines are exposed to extreme, harsh physical constraints.",
+                "problem-card2-desc2": "With my materials science background, I have directly analyzed physical mechanisms. This allows me to accurately filter and identify 'true signals' directly linked to factory yield.",
+                "problem-highlight": "\"Validating the physical logic hidden in data is my engineering philosophy to bridge the gap between factory lines and the digital world.\"",
+                
+                "pipeline-title": "Data Pipeline Architecture",
+                "pipeline-desc": "A 3-step automated pipeline designed to ingest raw factory datasets and transform them into core business value.",
+                "pipeline-step1-title": "Real-Time Ingestion & Filtering",
+                "pipeline-step1-desc": "Ingest live telemetry from IoT sensors and apply chemical/physical domain rules to filter out initial anomalies.",
+                "pipeline-step2-title": "Robust ETL Architecture",
+                "pipeline-step2-desc": "Extract, transform, and load massive, unorganized factory stream datasets into a clean Cloud Data Warehouse systematically.",
+                "pipeline-step3-title": "AI-Driven Defect Prediction & MLOps",
+                "pipeline-step3-desc": "Feed cleansed pipelines into ML models to predict real-time defect patterns, pushing instant anomaly logs to factory dashboards.",
+                
+                "strengths-title": "Core Strengths & Proof",
+                "strengths-tag": "[Synergy of Domain & IT Integration]",
+                "strengths-card1-title": "Yield-Centric Data Engineering",
+                "strengths-card1-desc1": "Going beyond just writing bug-free logic, my priority is analyzing production bottlenecks to optimize actual process yields.",
+                "strengths-card1-desc2": "Backed by rigorous full-stack training at SSAFY, I build high-throughput backends that ensure stable manufacturing data flow.",
+                "strengths-card2-title": "Yield Transformation Analysis (Simulation)",
+                
+                "contact-title": "Contact",
+                "contact-desc": "I am ready to mine gems out of your complex manufacturing pipelines. Technical chats and job offers are always welcome.",
+                "contact-email": "Email",
+                "contact-github": "GitHub",
+
+                "chart-problem-clean": "Clean Data Utilized",
+                "chart-problem-lost": "Data Discarded (Noise)",
+                "chart-yield-label": "Yield Score Post-AI Pipeline (%)",
+                "chart-weeks": ["W1", "W2", "W3", "W4", "W5", "W6"]
+            }
+        };
+
+        let currentLang = 'ko';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // 1. 버튼 active 클래스 제어
+            const buttons = document.querySelectorAll('.lang-btn');
+            buttons.forEach(btn => {
+                if (btn.innerText.toLowerCase() === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // 2. data-i18n 텍스트 전면 교체
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+
+            // 3. 차트 리랜더링 및 언어 패치
+            updateChartsLang(lang);
+        }
+
         const canvas = document.getElementById('hero-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -467,51 +655,80 @@
         }
         animate();
 
-        const ctxProblem = document.getElementById('problemChart').getContext('2d');
-        new Chart(ctxProblem, {
-            type: 'pie',
-            data: {
-                labels: ['정제 후 활용 데이터', '노이즈로 유실되는 데이터'],
-                datasets: [{
-                    data: [18, 82],
-                    backgroundColor: ['#06b6d4', '#1e293b'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { boxWidth: 12 } }
-                }
-            }
-        });
+        let problemChartInstance;
+        let yieldChartInstance;
 
-        const ctxYield = document.getElementById('yieldChart').getContext('2d');
-        new Chart(ctxYield, {
-            type: 'line',
-            data: {
-                labels: ['1주차', '2주차', '3주차', '4주차', '5주차', '6주차'],
-                datasets: [{
-                    label: '파이프라인 및 AI 도입 후 수율 (%)',
-                    data: [84.2, 85.1, 88.3, 91.5, 94.8, 96.2],
-                    borderColor: '#06b6d4',
-                    backgroundColor: 'rgba(6, 182, 212, 0.1)',
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { min: 80, max: 100 }
+        function initCharts() {
+            // Problem Chart 초기화
+            const ctxProblem = document.getElementById('problemChart').getContext('2d');
+            problemChartInstance = new Chart(ctxProblem, {
+                type: 'pie',
+                data: {
+                    labels: [translations[currentLang]['chart-problem-clean'], translations[currentLang]['chart-problem-lost']],
+                    datasets: [{
+                        data: [18, 82],
+                        backgroundColor: ['#06b6d4', '#1e293b'],
+                        borderWidth: 1
+                    }]
                 },
-                plugins: {
-                    legend: { position: 'bottom', labels: { boxWidth: 12 } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12 } }
+                    }
                 }
+            });
+
+            // Yield Chart 초기화
+            const ctxYield = document.getElementById('yieldChart').getContext('2d');
+            yieldChartInstance = new Chart(ctxYield, {
+                type: 'line',
+                data: {
+                    labels: translations[currentLang]['chart-weeks'],
+                    datasets: [{
+                        label: translations[currentLang]['chart-yield-label'],
+                        data: [84.2, 85.1, 88.3, 91.5, 94.8, 96.2],
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 80, max: 100 }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12 } }
+                    }
+                }
+            });
+        }
+
+        // 언어 스위치 시 차트 텍스트 실시간 전환 함수
+        function updateChartsLang(lang) {
+            if (problemChartInstance && yieldChartInstance) {
+                // 1. 파이 차트 변경
+                problemChartInstance.data.labels = [
+                    translations[lang]['chart-problem-clean'], 
+                    translations[lang]['chart-problem-lost']
+                ];
+                problemChartInstance.update();
+
+                // 2. 라인 차트 변경
+                yieldChartInstance.data.labels = translations[lang]['chart-weeks'];
+                yieldChartInstance.data.datasets[0].label = translations[lang]['chart-yield-label'];
+                yieldChartInstance.update();
             }
-        });
+        }
+
+        // 최초 윈도우 로드 시 차트 렌더링
+        window.onload = function() {
+            initCharts();
+        };
     </script>
 </body>
 </html>
