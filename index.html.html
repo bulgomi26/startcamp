@@ -12,14 +12,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-main: #f4f6f9;
-            --bg-card: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --color-primary: #1e3a8a; /* Deep Steel Blue */
-            --color-accent: #06b6d4;  /* Cyber Cyan */
+            --bg-main: #060811;        /* 깊은 우주의 Void Black */
+            --bg-card: rgba(15, 22, 38, 0.75); /* 우주선 제어판 느낌의 반투명 짙은 네이비 */
+            --text-primary: #f8fafc;   /* 스탈라 화이트 */
+            --text-secondary: #94a3b8; /* 성운 회색 */
+            --color-primary: #38bdf8;  /* 형광 사이언 */
+            --color-accent: #06b6d4;   /* 사이버 블루 */
             --color-accent-hover: #0891b2;
-            --border-color: #e2e8f0;
+            --border-color: rgba(255, 255, 255, 0.08); /* 극도로 미세한 별빛 경계선 */
             --header-height: 70px;     
         }
 
@@ -39,36 +39,54 @@
             background-color: var(--bg-main);
             color: var(--text-primary);
             line-height: 1.6;
-            overflow-x: hidden; /* [추가] 패럴랙스 요소가 좌우로 확장될 때 스크롤바가 깨지는 현상 방지 */
+            overflow-x: hidden; /* 패럴랙스 성운 블롭들이 화면 밖으로 확장 시 가로 스크롤 방지 */
             position: relative;
         }
 
-        /* [추가] 패럴랙스 흐름을 만드는 은은한 테크 무드의 네온 블롭 */
+        /* 우주 성운 1: 사이언 클라우드 */
         .decor-blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(120px);
+            filter: blur(140px);
             z-index: 0;
             pointer-events: none;
-            opacity: 0.15;
-            will-change: transform; /* 하드웨어 가속 유도하여 프레임 최적화 */
-            transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1); /* 부드럽게 밀리는 감각 부여 */
+            opacity: 0.22;
+            will-change: transform;
+            transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .decor-blob-1 {
-            width: 450px;
-            height: 450px;
+            width: 550px;
+            height: 550px;
             background: radial-gradient(circle, var(--color-accent) 0%, rgba(6,182,212,0) 70%);
             top: 25%;
             right: -150px;
         }
 
+        /* 우주 성운 2: 딥 블루 오리온 */
         .decor-blob-2 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, var(--color-primary) 0%, rgba(30,58,138,0) 70%);
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, #1e40af 0%, rgba(30,64,175,0) 70%);
             top: 60%;
-            left: -200px;
+            left: -250px;
+        }
+
+        /* 우주 성운 3: 초신성 퍼플 플레어 */
+        .decor-blob-3 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #a855f7 0%, rgba(168,85,247,0) 70%);
+            top: 100%;
+            right: -100px;
+            border-radius: 50%;
+            filter: blur(150px);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.15;
+            will-change: transform;
+            transition: transform 0.18s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         header {
@@ -77,14 +95,14 @@
             left: 0;
             width: 100%;
             height: var(--header-height);
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(6, 8, 17, 0.85); /* 다크 우주 투과형 헤더 */
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 2rem;
             z-index: 1000;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(12px); /* 뒤에 지나가는 성운을 은은하게 뭉개줌 */
         }
 
         .logo {
@@ -92,6 +110,7 @@
             font-weight: 700;
             color: var(--color-primary);
             letter-spacing: -0.05em;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
         }
 
         .nav-container {
@@ -119,7 +138,7 @@
             color: var(--text-secondary);
             font-weight: 500;
             font-size: 0.95rem;
-            transition: color 0.2s ease;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             line-height: 1; 
@@ -129,15 +148,16 @@
 
         nav ul li a:hover {
             color: var(--color-primary);
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
         }
 
-        /* 다국어 언어 스위치 버튼 캡슐 디자인 */
+        /* 다국어 다크 캡슐 버튼 */
         .lang-switch {
             display: flex;
-            background-color: var(--border-color);
+            background-color: rgba(255, 255, 255, 0.05);
             padding: 3px;
             border-radius: 20px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .lang-btn {
@@ -155,15 +175,18 @@
         }
 
         .lang-btn.active {
-            background-color: var(--color-primary);
-            color: #ffffff;
-            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
+            background-color: var(--color-accent);
+            color: #060811;
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.5);
+            font-weight: 700;
         }
 
         section {
             padding: 100px 2rem; 
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10; /* 성운들 위에 띄움 */
         }
 
         .section-title {
@@ -173,6 +196,7 @@
             color: var(--color-primary);
             position: relative;
             padding-bottom: 0.5rem;
+            text-shadow: 0 2px 8px rgba(56, 189, 248, 0.2);
         }
 
         .section-title::after {
@@ -183,6 +207,7 @@
             width: 50px;
             height: 4px;
             background-color: var(--color-accent);
+            box-shadow: 0 0 8px var(--color-accent);
         }
 
         /* 히어로 테크 디자인 */
@@ -195,7 +220,7 @@
             align-items: flex-start;
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            background: radial-gradient(circle at 30% 50%, #0d1527 0%, #060811 100%);
             color: #ffffff;
             width: 100%;
             max-width: none;
@@ -208,6 +233,7 @@
             line-height: 1.2;
             margin-bottom: 1.5rem;
             z-index: 2;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
 
         #hero p {
@@ -239,26 +265,27 @@
 
         .btn-primary {
             background-color: var(--color-accent);
-            color: #0f172a;
+            color: #060811;
             border: 1px solid var(--color-accent);
-            box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
         }
 
         .btn-primary:hover {
             background-color: var(--color-accent-hover);
             border-color: var(--color-accent-hover);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+            box-shadow: 0 6px 25px rgba(6, 182, 212, 0.7);
         }
 
         .btn-secondary {
             background-color: transparent;
             color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(5px);
         }
 
         .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.08);
             border-color: #ffffff;
             transform: translateY(-2px);
         }
@@ -268,9 +295,9 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 120%; /* [수정] 패럴랙스 동작 시 하단 여백 보정을 위해 세로길이 연장 */
+            height: 120%; /* 패럴랙스 하단 보정용 세로 연장 */
             z-index: 1;
-            opacity: 0.3;
+            opacity: 0.45; /* 검은 배경에서 캔버스 라인이 더 잘 보이도록 투명도 최적화 */
             will-change: transform;
         }
 
@@ -327,7 +354,14 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 2.5rem; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px); /* 카드 뒤로 성운 흐름 통과 효과 */
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 12px 35px -8px rgba(6, 182, 212, 0.15);
         }
 
         .card h3 {
@@ -336,12 +370,16 @@
             color: var(--color-primary);
         }
 
+        /* 가치관 하이라이트 구간 */
         .philosophy-highlight {
-            background-color: #eff6ff;
+            background-color: rgba(56, 189, 248, 0.06);
             border-left: 4px solid var(--color-primary);
             padding: 1.25rem;
             border-radius: 0 8px 8px 0;
             margin-top: 1.5rem;
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+            border-right: 1px solid rgba(56, 189, 248, 0.1);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
         }
 
         .philosophy-highlight p {
@@ -368,7 +406,15 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 2rem;
-            border-top: 4px solid var(--color-primary);
+            border-top: 4px solid #1e3a8a;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            border-top-color: var(--color-primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.2);
         }
 
         .step-num {
@@ -377,6 +423,7 @@
             color: var(--color-accent);
             font-weight: 700;
             margin-bottom: 0.75rem;
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
         }
 
         #contact {
@@ -396,15 +443,17 @@
             font-family: 'JetBrains Mono', monospace;
             font-weight: 500;
             color: var(--color-primary);
+            text-shadow: 0 0 5px rgba(56, 189, 248, 0.2);
         }
     </style>
 </head>
 <body>
 
-    <!-- [추가] 패럴랙스 가속 효과를 주기 위한 배경 레이어들 -->
     <div class="decor-blob decor-blob-1"></div>
     <div class="decor-blob decor-blob-2"></div>
+    <div class="decor-blob decor-blob-3"></div>
 
+    <!-- 네비게이션 헤더 -->
     <header>
         <div class="logo">DE. PORTFOLIO</div>
         <div class="nav-container">
@@ -428,7 +477,7 @@
     <!-- 1) Hero 섹션 -->
     <section id="hero">
         <canvas id="hero-canvas"></canvas>
-        <h1 data-i18n="hero-title">물리적 한계를 넘어<br><span style="color: var(--color-accent);">AI로 가속하다</span></h1>
+        <h1 data-i18n="hero-title">물리적 한계를 넘어<br><span style="color: var(--color-accent); text-shadow: 0 0 15px rgba(6,182,212,0.5);">AI로 가속하다</span></h1>
         <p data-i18n="hero-desc">현장의 도메인 지식을 이해하고, 노이즈 가득한 실전 데이터 속에서 의미 있는 가치를 정제하여 기업의 수율 개선을 이끄는 신소재 출신 데이터 엔지니어입니다.</p>
         
         <div class="hero-buttons">
@@ -613,7 +662,7 @@
         function setLanguage(lang) {
             currentLang = lang;
             
-            // 1. 버튼 active 클래스 제어
+            // 1. 버튼 활성 상태 제어
             const buttons = document.querySelectorAll('.lang-btn');
             buttons.forEach(btn => {
                 if (btn.innerText.toLowerCase() === lang) {
@@ -623,7 +672,7 @@
                 }
             });
 
-            // 2. data-i18n 텍스트 전면 교체
+            // 2. data-i18n 텍스트 전면 전환
             const elements = document.querySelectorAll('[data-i18n]');
             elements.forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -632,10 +681,11 @@
                 }
             });
 
-            // 3. 차트 리랜더링 및 언어 패치
+            // 3. 차트 레이블 실시간 전환
             updateChartsLang(lang);
         }
 
+        // 1. Hero 배경 Canvas 애니메이션 (격자 구조 및 실시간 데이터 노드 형성)
         const canvas = document.getElementById('hero-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -660,8 +710,8 @@
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = 'rgba(6, 182, 212, 0.15)';
-            ctx.fillStyle = 'rgba(6, 182, 212, 0.3)';
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.2)'; // 어두운 하늘에 더 선명히 대비되도록 투명도 조정
+            ctx.fillStyle = 'rgba(6, 182, 212, 0.4)';
 
             points.forEach(p => {
                 p.x += p.vx;
@@ -694,7 +744,11 @@
         let yieldChartInstance;
 
         function initCharts() {
-            // Problem Chart 초기화
+            // 차트 폰트 공통 컬러 설정 (야광/실버)
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)';
+
+            // Problem Chart 초기화 (원천 데이터 유실 파이 차트)
             const ctxProblem = document.getElementById('problemChart').getContext('2d');
             problemChartInstance = new Chart(ctxProblem, {
                 type: 'pie',
@@ -703,19 +757,23 @@
                     datasets: [{
                         data: [18, 82],
                         backgroundColor: ['#06b6d4', '#1e293b'],
-                        borderWidth: 1
+                        borderColor: '#0f172a',
+                        borderWidth: 2
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 12 } }
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { color: '#f8fafc', boxWidth: 12 } 
+                        }
                     }
                 }
             });
 
-            // Yield Chart 초기화
+            // Yield Chart 초기화 (수율 개선 라인 차트)
             const ctxYield = document.getElementById('yieldChart').getContext('2d');
             yieldChartInstance = new Chart(ctxYield, {
                 type: 'line',
@@ -725,66 +783,84 @@
                         label: translations[currentLang]['chart-yield-label'],
                         data: [84.2, 85.1, 88.3, 91.5, 94.8, 96.2],
                         borderColor: '#06b6d4',
-                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        backgroundColor: 'rgba(6, 182, 212, 0.15)',
                         fill: true,
-                        tension: 0.3
+                        tension: 0.3,
+                        borderWidth: 3
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { min: 80, max: 100 }
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        y: { 
+                            min: 80, 
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        }
                     },
                     plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 12 } }
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { color: '#f8fafc', boxWidth: 12 } 
+                        }
                     }
                 }
             });
         }
 
-        // 언어 스위치 시 차트 텍스트 실시간 전환 함수
+        // 언어 변경 시 차트 텍스트 실시간 전환 적용 함수
         function updateChartsLang(lang) {
             if (problemChartInstance && yieldChartInstance) {
-                // 1. 파이 차트 변경
+                // 1. 파이 차트 업데이트
                 problemChartInstance.data.labels = [
                     translations[lang]['chart-problem-clean'], 
                     translations[lang]['chart-problem-lost']
                 ];
                 problemChartInstance.update();
 
-                // 2. 라인 차트 변경
+                // 2. 라인 차트 업데이트
                 yieldChartInstance.data.labels = translations[lang]['chart-weeks'];
                 yieldChartInstance.data.datasets[0].label = translations[lang]['chart-yield-label'];
                 yieldChartInstance.update();
             }
         }
 
-        // 최초 윈도우 로드 시 차트 렌더링
+        // 최초 윈도우 로딩 시 차트 자동 렌더링
         window.onload = function() {
             initCharts();
         };
 
-        // 4. 정교한 패럴랙스(Parallax) 스크롤 리스너
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY;
 
-            // 1) 히어로 배경 네트워킹 격자선: 스크롤 속도의 40% 속도로 가볍게 아래로 이동하며 깊이감 형성
+            // 1) 히어로 네트워킹 격자선: 스크롤 속도의 40%로 느리게 연동하여 깊이감 형성
             const heroCanvas = document.getElementById('hero-canvas');
             if (heroCanvas) {
                 heroCanvas.style.transform = `translateY(${scrolled * 0.4}px)`;
             }
 
-            // 2) 네온 블롭 1 (Cyan): 스크롤과 살짝 역방향(-15%)으로 가볍게 떠오름
+            // 2) 우주 성운 1 (Cyan): 스크롤 역방향(-15%) 작동
             const blob1 = document.querySelector('.decor-blob-1');
             if (blob1) {
                 blob1.style.transform = `translateY(${scrolled * -0.15}px)`;
             }
 
-            // 3) 네온 블롭 2 (Blue): 스크롤 순방향(+12%)으로 무겁게 가라앉아 원근 효과 극대화
+            // 3) 우주 성운 2 (Blue): 스크롤 순방향(+12%) 작동
             const blob2 = document.querySelector('.decor-blob-2');
             if (blob2) {
                 blob2.style.transform = `translateY(${scrolled * 0.12}px)`;
+            }
+
+            // 4) 우주 성운 3 (Purple): 스크롤 역방향(-10%) 작동으로 상호 교차 입체감 형성
+            const blob3 = document.querySelector('.decor-blob-3');
+            if (blob3) {
+                blob3.style.transform = `translateY(${scrolled * -0.1}px)`;
             }
         });
     </script>
