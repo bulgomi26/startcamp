@@ -10,6 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <!-- Chart.js 라이브러리 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase SDK Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, collection, onSnapshot, addDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 글로벌 변수 바인딩
+        window.firebaseImports = {
+            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged,
+            getFirestore, doc, setDoc, updateDoc, collection, onSnapshot, addDoc, query
+        };
+    </script>
+
     <style>
         :root {
             --bg-main: #030408;        /* 극도의 딥 블랙 우주 배경 */
@@ -39,7 +53,7 @@
             background-color: var(--bg-main);
             color: var(--text-primary);
             line-height: 1.6;
-            overflow-x: hidden; /* 가로 스크롤바 방지 */
+            overflow-x: hidden; 
             position: relative;
         }
 
@@ -49,7 +63,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: -1; /* 모든 콘텐츠의 최하단 배경에 배치 */
+            z-index: -1; 
             pointer-events: none;
         }
 
@@ -60,7 +74,7 @@
             filter: blur(140px);
             z-index: 0;
             pointer-events: none;
-            opacity: 0.15; /* 우주 테두리와 조화롭게 차분한 광원 연출 */
+            opacity: 0.15; 
             will-change: transform;
             transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
@@ -97,20 +111,21 @@
             transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
+        /* */
         header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: var(--header-height);
-            background-color: rgba(3, 4, 8, 0.85); /* 다크 우주 투과형 헤더 */
+            background-color: rgba(3, 4, 8, 0.85); 
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 2rem;
             z-index: 1000;
-            backdrop-filter: blur(12px); /* 뒤로 움직이는 성운과 별을 신비롭게 뭉갬 */
+            backdrop-filter: blur(12px); 
         }
 
         .logo {
@@ -159,7 +174,6 @@
             text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
         }
 
-        /* 다국어 다크 캡슐 버튼 */
         .lang-switch {
             display: flex;
             background-color: rgba(255, 255, 255, 0.05);
@@ -189,12 +203,13 @@
             font-weight: 700;
         }
 
+        /* */
         section {
             padding: 100px 2rem; 
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
-            z-index: 10; /* 은하수 배경 위에 고정 배치 */
+            z-index: 10; 
         }
 
         .section-title {
@@ -351,7 +366,7 @@
             border-radius: 12px;
             padding: 2.5rem; 
             box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px); /* 카드 뒤로 성운과 별이 흐르는 투과 효과 */
+            backdrop-filter: blur(8px); 
             transition: border 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -366,7 +381,6 @@
             color: var(--color-primary);
         }
 
-        /* 가치관 하이라이트 구간 */
         .philosophy-highlight {
             background-color: rgba(56, 189, 248, 0.06);
             border-left: 4px solid var(--color-primary);
@@ -422,6 +436,247 @@
             text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
         }
 
+        /* */
+        /* 커뮤니티 (방명록 & 질문) UI 스타일 */
+        .community-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.6rem;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--color-primary);
+            box-shadow: 0 0 8px var(--color-primary);
+        }
+
+        .forum-panel {
+            display: none;
+        }
+
+        .forum-panel.active {
+            display: block;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            outline: none;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .input-field:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+        }
+
+        textarea.input-field {
+            width: 100%;
+            height: 100px;
+            resize: none;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            cursor: pointer;
+            accent-color: var(--color-accent);
+        }
+
+        /* 목록 카드 스티커 */
+        .forum-list {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 450px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        /* 스크롤바 커스텀 */
+        .forum-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .forum-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .forum-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .forum-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .forum-author {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .forum-content {
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            white-space: pre-line;
+        }
+
+        .forum-private-badge {
+            color: #ef4444;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* 답글 레이아웃 */
+        .forum-reply-box {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed rgba(255, 255, 255, 0.08);
+            background: rgba(56, 189, 248, 0.02);
+            border-radius: 4px;
+            padding-left: 1rem;
+        }
+
+        .reply-author-tag {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            margin-bottom: 0.25rem;
+        }
+
+        .admin-action-row {
+            margin-top: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* FAQ 아코디언 스타일 */
+        .faq-accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .faq-item {
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .faq-trigger {
+            width: 100%;
+            background: none;
+            border: none;
+            color: #ffffff;
+            text-align: left;
+            padding: 1.25rem 1.5rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+        }
+
+        .faq-trigger:hover {
+            color: var(--color-primary);
+        }
+
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .faq-content-inner {
+            padding: 1.25rem 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            line-height: 1.7;
+        }
+
+        .faq-icon {
+            font-family: 'JetBrains Mono', monospace;
+            transition: transform 0.3s;
+            color: var(--color-accent);
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .admin-login-bar {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
         #contact {
             padding-bottom: 140px; 
         }
@@ -462,6 +717,8 @@
                     <li><a href="#problem" data-i18n="nav-philosophy">철학 & 문제의식</a></li>
                     <li><a href="#pipeline" data-i18n="nav-process">프로세스</a></li>
                     <li><a href="#strengths" data-i18n="nav-strengths">강점</a></li>
+                    <li><a href="#forum-section" data-i18n="nav-community">소통공간</a></li>
+                    <li><a href="#faq" data-i18n="nav-faq">자주 한 질문</a></li>
                     <li><a href="#contact" data-i18n="nav-contact">연락하기</a></li>
                 </ul>
             </nav>
@@ -537,7 +794,7 @@
             <div class="card" style="display: flex; flex-direction: column; justify-content: center;">
                 <p style="font-weight: 700; color: var(--color-primary); margin-bottom: 0.5rem;" data-i18n="strengths-tag">[도메인 + IT 융합의 시너지]</p>
                 <h3 style="font-size: 1.5rem; margin-bottom: 1rem;" data-i18n="strengths-card1-title">수율 개선 중심의 엔지니어링</h3>
-                <p style="margin-bottom: 1rem;" data-i18n="strengths-card1-desc1">단순히 오류 없는 코드를 작성하는 단계를 넘어, 공정의 병목을 분석하고 파이프라인을 최적화하여 <strong>실제 생산 효율 향상</strong>을 이루는 것을 목적으로 삼습니다.</p>
+                <p style="margin-bottom: 1rem;" data-i18n="strengths-card1-desc1">단순히 오류 없는 코드를 작성하는 단계를 넘어, 공정의 병목을 분석하고 파이프라인을 최적화하여 실제 생산 효율 향상을 이루는 것을 목적으로 삼습니다.</p>
                 <p data-i18n="strengths-card1-desc2">SSAFY에서 검증된 탄탄한 백엔드/데이터 처리 아키텍처 설계 능력을 바탕으로, 대용량 제조 데이터가 막힘없이 흐르는 시스템을 구축합니다.</p>
             </div>
             <div class="card">
@@ -549,7 +806,116 @@
         </div>
     </section>
 
-    <!-- 5) Contact 섹션 -->
+    <!-- -->
+    <!-- 5) Forum & Guestbook 섹션 -->
+    <section id="forum-section">
+        <h2 class="section-title" data-i18n="community-title">소통 공간 (실시간 커뮤니티)</h2>
+        <div class="card">
+            <div class="community-tabs">
+                <button class="tab-btn active" onclick="switchForumTab('guestbook')" id="tab-guestbook-btn" data-i18n="tab-guestbook">방명록</button>
+                <button class="tab-btn" onclick="switchForumTab('qa')" id="tab-qa-btn" data-i18n="tab-qa">1:1 질문 (Q&A)</button>
+            </div>
+
+            <!-- 방명록 패널 -->
+            <div id="panel-guestbook" class="forum-panel active">
+                <div class="form-row">
+                    <input type="text" id="gb-name" class="input-field" placeholder="닉네임 / 회사명" style="width: 250px;" data-i18n-placeholder="placeholder-name">
+                </div>
+                <textarea id="gb-content" class="input-field" placeholder="여기에 따뜻한 방명록 응원 한마디를 적어주세요!" data-i18n-placeholder="placeholder-gb"></textarea>
+                <button class="btn btn-primary" onclick="addGuestbook()" data-i18n="btn-submit">등록하기</button>
+
+                <div class="forum-list" id="gb-list">
+                    <!-- 스크립트로 렌더링 -->
+                </div>
+            </div>
+
+            <!-- Q&A 패널 -->
+            <div id="panel-qa" class="forum-panel">
+                <div class="form-row" style="align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <input type="text" id="qa-name" class="input-field" placeholder="닉네임 / 담당자명" style="width: 250px;" data-i18n-placeholder="placeholder-name">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="qa-private">
+                        <span data-i18n="chk-private">🔒 비공개로 질문하기 (작성자와 관리자만 볼 수 있음)</span>
+                    </label>
+                </div>
+                <textarea id="qa-content" class="input-field" placeholder="이력서, 포트폴리오, 커피챗 등 자유로운 1:1 질문을 적어주세요." data-i18n-placeholder="placeholder-qa"></textarea>
+                <button class="btn btn-primary" onclick="addQuestion()" data-i18n="btn-submit">등록하기</button>
+
+                <div class="forum-list" id="qa-list">
+                    <!-- 스크립트로 렌더링 -->
+                </div>
+
+                <!-- 테스트용 관리자 전환 모듈 -->
+                <div class="admin-login-bar">
+                    <div>
+                        <span style="font-weight: 700; color: var(--color-accent);" data-i18n="admin-test-title">💡 관리자 모드 시뮬레이션:</span>
+                        <span style="color: var(--text-secondary);" data-i18n="admin-test-desc">관리자로 로그인하면 모든 비공개 질문을 열람하고 답변을 직접 달 수 있습니다. (테스트 비밀번호: admin123)</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="password" id="admin-password" class="input-field" placeholder="비밀번호" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; width: 120px;" data-i18n-placeholder="placeholder-pw">
+                        <button class="btn btn-secondary" onclick="toggleAdminMode()" id="admin-login-btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" data-i18n="btn-login">로그인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- -->
+    <!-- 6) FAQ 섹션 -->
+    <section id="faq">
+        <h2 class="section-title" data-i18n="faq-title">자주 한 질문 (FAQ)</h2>
+        <div class="faq-accordion">
+            <div class="faq-item">
+                <button class="faq-trigger" onclick="toggleFaq(this)">
+                    <span data-i18n="faq-q1">Q. 신소재공학과 출신이 데이터 엔지니어링에서 가지는 차별점은 무엇인가요?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <div class="faq-content-inner" data-i18n="faq-a1">
+                        공정 및 실험 현장에서 발생하는 복잡한 원천 물성 데이터(온도, 압력, 미세 물성, 노이즈)를 전공 공학 지식을 바탕으로 빠르게 판별하는 '도메인 이해도'를 갖췄습니다. IT 전공자들보다 센서 변수가 갖는 실제 물리적 중요도(Feature)를 명확히 선별해 가치 있는 파이프라인 정제 기준을 세우는 역량이 남다릅니다.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-trigger" onclick="toggleFaq(this)">
+                    <span data-i18n="faq-q2">Q. SSAFY에서는 데이터 가속을 위해 어떤 기술 인프라를 수련했나요?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <div class="faq-content-inner" data-i18n="faq-a2">
+                        SSAFY에서는 대용량 트래픽 가공과 무중단 서버 시스템 설계를 심도 있게 다뤘습니다. 대용량 실시간 제조 센서 처리를 안정적으로 받아내기 위한 분산 메시징 큐(Apache Kafka) 파이프라인, 주기적인 배치 가공 자동화를 위한 워크플로우 매니저(Airflow), 그리고 견고한 ETL 아키텍처 설계를 완성도 있게 습득했습니다.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-trigger" onclick="toggleFaq(this)">
+                    <span data-i18n="faq-q3">Q. 실제 공정에서 데이터로 수율 개선을 이끌어 낸 구체적인 시나리오는 무엇인가요?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <div class="faq-content-inner" data-i18n="faq-a3">
+                        예컨대 하이테크 배터리 전극 코팅 공정 중, 가혹한 온도 변수 및 불량률 원인을 찾기 위해 대용량 스트리밍 데이터를 ETL 파이프라인으로 정제합니다. 이 가공 데이터를 가속 학습 머신러닝(ML) 이상 탐지 모델에 피딩하여 수율 병목 지점을 실시간 예측 및 감지하여, 생산 수율을 단 6주 만에 시뮬레이션 기준 84.2%에서 96.2%로 무려 12% 가량 비약적인 가속 안정화를 보장하도록 돕습니다.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-trigger" onclick="toggleFaq(this)">
+                    <span data-i18n="faq-q4">Q. 기술 커피챗이나 이력서 추가 면접 제안은 어떻게 진행할 수 있나요?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <div class="faq-content-inner" data-i18n="faq-a4">
+                        하단의 '연락하기' 섹션의 이메일 및 깃허브 공간을 통해 면접 제안을 주시거나, 바로 위 실시간 소통 공간의 '1:1 질문' 공간을 통해 익명 혹은 실명으로 미팅 제안을 남겨주시면 24시간 내로 이메일 또는 질문 탭 댓글을 통해 신속히 답변을 드리겠습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) Contact 섹션 -->
     <section id="contact">
         <h2 class="section-title" data-i18n="contact-title">연락하기</h2>
         <div class="card">
@@ -559,6 +925,7 @@
         </div>
     </section>
 
+    <!-- -->
     <script>
         const translations = {
             ko: {
@@ -566,6 +933,8 @@
                 "nav-philosophy": "철학 & 문제의식",
                 "nav-process": "프로세스",
                 "nav-strengths": "강점",
+                "nav-community": "소통공간",
+                "nav-faq": "자주 한 질문",
                 "nav-contact": "연락하기",
                 
                 "hero-title": "물리적 한계를 넘어<br><span style='color: var(--color-accent);'>AI로 가속하다</span>",
@@ -593,10 +962,33 @@
                 "strengths-title": "Core Strengths & Proof",
                 "strengths-tag": "[도메인 + IT 융합의 시너지]",
                 "strengths-card1-title": "수율 개선 중심의 엔지니어링",
-                "strengths-card1-desc1": "단순히 오류 없는 코드를 작성하는 단계를 넘어, 공정의 병목을 분석하고 파이프라인을 최적화하여 실제 생산 효율 향상을 이루는 것을 목적으로 삼습니다.",
+                "strengths-card1-desc1": "단순히 오류 없는 코드를 작성하는 단계를 넘어, 공정의 병목을 분석하고 파이프라인을 최적화하여 실제 생산 효율 향상도 도모합니다.",
                 "strengths-card1-desc2": "SSAFY에서 검증된 탄탄한 백엔드/데이터 처리 아키텍처 설계 능력을 바탕으로, 대용량 제조 데이터가 막힘없이 흐르는 시스템을 구축합니다.",
                 "strengths-card2-title": "엔지니어링 도입 전후 공정 수율 변화 (시뮬레이션)",
                 
+                "community-title": "소통 공간 (실시간 커뮤니티)",
+                "tab-guestbook": "방명록",
+                "tab-qa": "1:1 질문 (Q&A)",
+                "btn-submit": "등록하기",
+                "chk-private": "🔒 비공개로 질문하기 (작성자와 관리자만 볼 수 있음)",
+                "placeholder-name": "닉네임 / 회사명",
+                "placeholder-gb": "여기에 따뜻한 방명록 응원 한마디를 적어주세요!",
+                "placeholder-qa": "이력서, 포트폴리오, 커피챗 등 자유로운 1:1 질문을 적어주세요.",
+                "placeholder-pw": "비밀번호",
+                "btn-login": "로그인",
+                "admin-test-title": "💡 관리자 모드 시뮬레이션:",
+                "admin-test-desc": "관리자로 로그인하면 모든 비공개 질문을 열람하고 답변을 직접 달 수 있습니다. (테스트 비밀번호: admin123)",
+                
+                "faq-title": "자주 한 질문 (FAQ)",
+                "faq-q1": "Q. 신소재공학과 출신이 데이터 엔지니어링에서 가지는 차별점은 무엇인가요?",
+                "faq-a1": "공정 및 실험 현장에서 발생하는 복잡한 원천 물성 데이터(온도, 압력, 미세 물성, 노이즈)를 전공 공학 지식을 바탕으로 빠르게 판별하는 '도메인 이해도'를 갖췄습니다. IT 전공자들보다 센서 변수가 갖는 실제 물리적 중요도(Feature)를 명확히 선별해 가치 있는 파이프라인 정제 기준을 세우는 역량이 남다릅니다.",
+                "faq-q2": "Q. SSAFY에서는 데이터 가속을 위해 어떤 기술 인프라를 수련했나요?",
+                "faq-a2": "SSAFY에서는 대용량 트래픽 가공과 무중단 서버 시스템 설계를 심도 있게 다뤘습니다. 대용량 실시간 제조 센서 처리를 안정적으로 받아내기 위한 분산 메시징 큐(Apache Kafka) 파이프라인, 주기적인 배치 가공 자동화를 위한 워크플로우 매니저(Airflow), 그리고 견고한 ETL 아키텍처 설계를 완성도 있게 습득했습니다.",
+                "faq-q3": "Q. 실제 공정에서 데이터로 수율 개선을 이끌어 낸 구체적인 시나리오는 무엇인가요?",
+                "faq-a3": "예컨대 하이테크 배터리 전극 코팅 공정 중, 가혹한 온도 변수 및 불량률 원인을 찾기 위해 대용량 스트리밍 데이터를 ETL 파이프라인으로 정제합니다. 이 가공 데이터를 가속 학습 머신러닝(ML) 이상 탐지 모델에 피딩하여 수율 병목 지점을 실시간 예측 및 감지하여, 생산 수율을 단 6주 만에 시뮬레이션 기준 84.2%에서 96.2%로 무려 12% 가량 비약적인 가속 안정화를 보장하도록 돕습니다.",
+                "faq-q4": "Q. 기술 커피챗이나 이력서 추가 면접 제안은 어떻게 진행할 수 있나요?",
+                "faq-a4": "하단의 '연락하기' 섹션의 이메일 및 깃허브 공간을 통해 면접 제안을 주시거나, 바로 위 실시간 소통 공간의 '1:1 질문' 공간을 통해 익명 혹은 실명으로 미팅 제안을 남겨주시면 24시간 내로 이메일 또는 질문 탭 댓글을 통해 신속히 답변을 드리겠습니다.",
+
                 "contact-title": "연락하기",
                 "contact-desc": "귀사의 수많은 데이터 속에서 보석을 캐내고 공정 파이프라인을 함께 가속하고 싶습니다. 기술 커피챗이나 면접 제안은 언제든 환영합니다.",
                 "contact-email": "이메일",
@@ -612,6 +1004,8 @@
                 "nav-philosophy": "Philosophy",
                 "nav-process": "Process",
                 "nav-strengths": "Strengths",
+                "nav-community": "Community",
+                "nav-faq": "FAQ",
                 "nav-contact": "Contact",
                 
                 "hero-title": "Beyond Physical Limits,<br><span style='color: var(--color-accent);'>Accelerated with AI</span>",
@@ -643,6 +1037,29 @@
                 "strengths-card1-desc2": "Backed by rigorous full-stack training at SSAFY, I build high-throughput backends that ensure stable manufacturing data flow.",
                 "strengths-card2-title": "Yield Transformation Analysis (Simulation)",
                 
+                "community-title": "Interactive Lounge (Live Forum)",
+                "tab-guestbook": "Guestbook",
+                "tab-qa": "Q&A (1:1)",
+                "btn-submit": "Submit",
+                "chk-private": "🔒 Post Privately (Only visible to Author & Admin)",
+                "placeholder-name": "Your name / Company",
+                "placeholder-gb": "Leave a warm encouraging word here!",
+                "placeholder-qa": "Ask any 1:1 questions about resume, portfolio, or coffee chats.",
+                "placeholder-pw": "Password",
+                "btn-login": "Admin Login",
+                "admin-test-title": "💡 Admin Mode Simulation:",
+                "admin-test-desc": "Log in as administrator to unlock all private questions and post replies. (Test Password: admin123)",
+
+                "faq-title": "Frequently Asked Questions (FAQ)",
+                "faq-q1": "Q. What is the key differentiation of a Materials Science background in Data Engineering?",
+                "faq-a1": "I hold a high 'domain understanding' that allows me to swiftly interpret raw, noisy industrial physical parameters (temperature, pressure, lattice structure anomalies) from the factory floor. Unlike traditional CS majors, I can selectively feature-engineer true signals connected directly to actual chemical or mechanical yield formulas.",
+                "faq-q2": "Q. What technical architecture did you master at SSAFY for pipeline acceleration?",
+                "faq-a2": "At SSAFY, I specialized in high-volume traffic handling and distributed cloud network infrastructure. I built scalable stream integration schemas utilizing Apache Kafka for reliable event streaming, managed workflow sequencing with Apache Airflow pipelines, and engineered clean ETL pipelines into enterprise-level data store infrastructures.",
+                "faq-q3": "Q. Can you present a realistic scenario of driving yield optimization using your pipelines?",
+                "faq-a3": "In a battery electrode coating environment, I collect high-frequency IoT streaming logs via an optimized ETL pipeline. By feeding this clean repository into XGBoost/Anomaly detection models, we forecast and block line anomalies in real-time, which theoretically escalates the baseline factory yield rate from 84.2% up to 96.2% within just 6 weeks.",
+                "faq-q4": "Q. How can I schedule a technical coffee chat or send interview invitations?",
+                "faq-a4": "You can reach out through the GitHub and Email links in the 'Contact' section below, or drop a real-time question anonymously or with your identity via our 1:1 Q&A tool right above. I reply back within 24 hours either via email or direct replies on the board.",
+
                 "contact-title": "Contact",
                 "contact-desc": "I am ready to mine gems out of your complex manufacturing pipelines. Technical chats and job offers are always welcome.",
                 "contact-email": "Email",
@@ -660,7 +1077,6 @@
         function setLanguage(lang) {
             currentLang = lang;
             
-            // 1. 버튼 활성 상태 제어
             const buttons = document.querySelectorAll('.lang-btn');
             buttons.forEach(btn => {
                 if (btn.innerText.toLowerCase() === lang) {
@@ -670,7 +1086,6 @@
                 }
             });
 
-            // 2. data-i18n 텍스트 전면 전환
             const elements = document.querySelectorAll('[data-i18n]');
             elements.forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -679,11 +1094,21 @@
                 }
             });
 
-            // 3. 차트 레이블 실시간 전환
+            // 플레이스홀더 다국어 바인딩
+            const inputElements = document.querySelectorAll('[data-i18n-placeholder]');
+            inputElements.forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
+            });
+
             updateChartsLang(lang);
+            renderGuestbook();
+            renderQuestions();
         }
 
-        const spaceCanvas = document.getElementById('space-bg-canvas');
+        //        const spaceCanvas = document.getElementById('space-bg-canvas');
         const sCtx = spaceCanvas.getContext('2d');
 
         function resizeSpaceCanvas() {
@@ -693,26 +1118,21 @@
         resizeSpaceCanvas();
         window.addEventListener('resize', resizeSpaceCanvas);
 
-        // 3D 공간 연출용 트리플 레이어 구조체
         const spaceLayers = [
-            // Layer 1: 원경 은하 먼지 (120개, 매우 작고 흐리며 최저속 이동)
             { count: 120, sizeMin: 0.3, sizeMax: 1.0, parallax: 0.05, baseAlpha: 0.2, color: '#ffffff', points: [] },
-            // Layer 2: 중경 무리성단 (60개, 푸른빛, 중간 크기 및 중간 속도)
             { count: 60, sizeMin: 1.0, sizeMax: 2.0, parallax: 0.15, baseAlpha: 0.4, color: '#38bdf8', points: [] },
-            // Layer 3: 근경 주성단 및 성단망 (20개, 밝은 블루네온, 고속 이동 및 탐지선 그리드 작동)
             { count: 20, sizeMin: 2.0, sizeMax: 3.2, parallax: 0.35, baseAlpha: 0.6, color: '#06b6d4', points: [] }
         ];
 
-        // 각 레이어에 은하 좌표 분배
         spaceLayers.forEach(layer => {
             for (let i = 0; i < layer.count; i++) {
                 layer.points.push({
-                    x: Math.random(), // 가로 비율 좌표 (0~1)
-                    y: Math.random(), // 세로 비율 좌표 (0~1)
-                    vx: (Math.random() - 0.5) * 0.0001, // 유기적인 아주 미세한 유동속도
+                    x: Math.random(), 
+                    y: Math.random(), 
+                    vx: (Math.random() - 0.5) * 0.0001, 
                     vy: (Math.random() - 0.5) * 0.0001,
-                    phase: Math.random() * Math.PI * 2, // 반짝임 시작 각도
-                    twinkleSpeed: 0.01 + Math.random() * 0.02 // 반짝이는 속도
+                    phase: Math.random() * Math.PI * 2, 
+                    twinkleSpeed: 0.01 + Math.random() * 0.02 
                 });
             }
         });
@@ -721,46 +1141,35 @@
 
         function runSpaceEngine() {
             sCtx.clearRect(0, 0, spaceCanvas.width, spaceCanvas.height);
-            
-            // 실시간 스크롤 감지값 적용
             currentScrollY = window.scrollY;
 
-            // 트리플 우주망 레이어 개별 렌더링
             spaceLayers.forEach((layer) => {
                 sCtx.fillStyle = layer.color;
 
                 layer.points.forEach(p => {
-                    // 유기적인 미세 움직임 누적
                     p.x += p.vx;
                     p.y += p.vy;
 
-                    // 화면 경계 이탈 시 랩어라운드 순환
                     if (p.x < 0) p.x += 1; if (p.x > 1) p.x -= 1;
                     if (p.y < 0) p.y += 1; if (p.y > 1) p.y -= 1;
 
-                    // 실제 화면 속 가로/세로 픽셀 계산
                     const px = p.x * spaceCanvas.width;
-                    
-                    // 패럴랙스 물리 연산: (기본 세로좌표 - 스크롤 오프셋 * 레이어 가중치) % 화면 높이
                     let py = (p.y * spaceCanvas.height - (currentScrollY * layer.parallax)) % spaceCanvas.height;
-                    if (py < 0) py += spaceCanvas.height; // 위아래 무한 연동 보정
+                    if (py < 0) py += spaceCanvas.height; 
 
-                    // 삼각함수를 활용한 아름다운 밤하늘 별 반짝임 연출
                     p.phase += p.twinkleSpeed;
                     const brightness = layer.baseAlpha + Math.sin(p.phase) * (layer.baseAlpha * 0.5);
 
                     sCtx.beginPath();
                     sCtx.globalAlpha = Math.max(0.1, Math.min(1, brightness));
                     
-                    // 별 형상 원형 렌더링
                     const r = layer.sizeMin + (layer.sizeMax - layer.sizeMin) * ((Math.sin(p.phase) + 1) / 2);
                     sCtx.arc(px, py, r, 0, Math.PI * 2);
                     sCtx.fill();
                 });
 
-                // Layer 3 (근경 성단)에만 미래지향적인 별자리 데이터 링크망 그리기
                 if (layer.parallax === 0.35) {
-                    sCtx.strokeStyle = 'rgba(6, 182, 212, 0.08)'; // 은은한 형광 블루 연결망
+                    sCtx.strokeStyle = 'rgba(6, 182, 212, 0.08)'; 
                     sCtx.lineWidth = 1;
 
                     for (let i = 0; i < layer.points.length; i++) {
@@ -775,11 +1184,10 @@
                             let pjy = (pj.y * spaceCanvas.height - (currentScrollY * layer.parallax)) % spaceCanvas.height;
                             if (pjy < 0) pjy += spaceCanvas.height;
 
-                            // 별과 별 사이의 거리가 150px 이내일 때 연결선 가동
                             const dist = Math.hypot(pix - pjx, piy - pjy);
                             if (dist < 150) {
                                 sCtx.beginPath();
-                                sCtx.globalAlpha = (1 - (dist / 150)) * 0.2; // 거리에 비례해 페이드아웃
+                                sCtx.globalAlpha = (1 - (dist / 150)) * 0.2; 
                                 sCtx.moveTo(pix, piy);
                                 sCtx.lineTo(pjx, pjy);
                                 sCtx.stroke();
@@ -789,7 +1197,7 @@
                 }
             });
 
-            sCtx.globalAlpha = 1.0; // 투명도 원복 복원
+            sCtx.globalAlpha = 1.0; 
             requestAnimationFrame(runSpaceEngine);
         }
         runSpaceEngine();
@@ -798,11 +1206,9 @@
         let yieldChartInstance;
 
         function initCharts() {
-            // 차트 폰트 공통 컬러 설정 (야광/실버)
             Chart.defaults.color = '#94a3b8';
             Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)';
 
-            // Problem Chart 초기화 (원천 데이터 유실 파이 차트)
             const ctxProblem = document.getElementById('problemChart').getContext('2d');
             problemChartInstance = new Chart(ctxProblem, {
                 type: 'pie',
@@ -827,7 +1233,6 @@
                 }
             });
 
-            // Yield Chart 초기화 (수율 개선 라인 차트)
             const ctxYield = document.getElementById('yieldChart').getContext('2d');
             yieldChartInstance = new Chart(ctxYield, {
                 type: 'line',
@@ -868,48 +1273,376 @@
             });
         }
 
-        // 언어 변경 시 차트 텍스트 실시간 전환 적용 함수
         function updateChartsLang(lang) {
             if (problemChartInstance && yieldChartInstance) {
-                // 1. 파이 차트 업데이트
                 problemChartInstance.data.labels = [
                     translations[lang]['chart-problem-clean'], 
                     translations[lang]['chart-problem-lost']
                 ];
                 problemChartInstance.update();
 
-                // 2. 라인 차트 업데이트
                 yieldChartInstance.data.labels = translations[lang]['chart-weeks'];
                 yieldChartInstance.data.datasets[0].label = translations[lang]['chart-yield-label'];
                 yieldChartInstance.update();
             }
         }
 
-        // 최초 윈도우 로딩 시 차트 자동 렌더링
-        window.onload = function() {
-            initCharts();
-        };
+        //        function toggleFaq(button) {
+            const item = button.parentElement;
+            const content = button.nextElementSibling;
+            
+            // 모든 FAQ 항목 수축
+            document.querySelectorAll('.faq-item').forEach(el => {
+                if (el !== item) {
+                    el.classList.remove('active');
+                    el.querySelector('.faq-content').style.maxHeight = null;
+                }
+            });
+
+            // 현재 항목 토글
+            item.classList.toggle('active');
+            if (item.classList.contains('active')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
 
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY;
 
-            // 1) 우주 성운 1 (Cyan): 스크롤 역방향(-15%) 작동
             const blob1 = document.querySelector('.decor-blob-1');
             if (blob1) {
                 blob1.style.transform = `translateY(${scrolled * -0.15}px)`;
             }
 
-            // 2) 우주 성운 2 (Blue): 스크롤 순방향(+12%) 작동
             const blob2 = document.querySelector('.decor-blob-2');
             if (blob2) {
                 blob2.style.transform = `translateY(${scrolled * 0.12}px)`;
             }
 
-            // 3) 우주 성운 3 (Purple): 스크롤 역방향(-10%) 작동으로 입체적인 유동 형태 유지
             const blob3 = document.querySelector('.decor-blob-3');
             if (blob3) {
                 blob3.style.transform = `translateY(${scrolled * -0.1}px)`;
             }
+        });
+    </script>
+
+    <!-- -->
+    <script type="module">
+        // 클라우드 데이터 스토어 연동 및 익명인증 초기화
+        const { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, getFirestore, doc, setDoc, updateDoc, collection, onSnapshot, addDoc, query } = window.firebaseImports;
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-data-engineer-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "",
+            authDomain: "default-app-id.firebaseapp.com",
+            projectId: "default-app-id",
+            storageBucket: "default-app-id.appspot.com",
+            messagingSenderId: "12345",
+            appId: "1:12345:web:12345"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let user = null;
+        let userId = '';
+        let isAdmin = false;
+
+        // 브라우저 세션 기반 고정 ID 발급 (비공개 글 열람 확인용)
+        let sessionVisitorId = localStorage.getItem('de_portfolio_session_v_id');
+        if (!sessionVisitorId) {
+            sessionVisitorId = 'v_' + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('de_portfolio_session_v_id', sessionVisitorId);
+        }
+
+        // 인메모리 피드 캐시 데이터
+        let guestbookData = [];
+        let questionsData = [];
+
+        // UI 탭 제어 함수
+        window.switchForumTab = function(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.forum-panel').forEach(panel => panel.classList.remove('active'));
+
+            if (tabName === 'guestbook') {
+                document.getElementById('tab-guestbook-btn').classList.add('active');
+                document.getElementById('panel-guestbook').classList.add('active');
+            } else {
+                document.getElementById('tab-qa-btn').classList.add('active');
+                document.getElementById('panel-qa').classList.add('active');
+            }
+        }
+
+        // 관리자 모드 온/오프
+        window.toggleAdminMode = function() {
+            const passwordInput = document.getElementById('admin-password');
+            const loginBtn = document.getElementById('admin-login-btn');
+
+            if (!isAdmin) {
+                if (passwordInput.value === 'admin123') {
+                    isAdmin = true;
+                    loginBtn.innerText = currentLang === 'ko' ? '로그아웃' : 'Logout';
+                    loginBtn.classList.add('btn-primary');
+                    loginBtn.classList.remove('btn-secondary');
+                    passwordInput.style.display = 'none';
+                    passwordInput.value = '';
+                } else {
+                    alert(currentLang === 'ko' ? '비밀번호가 올바르지 않습니다.' : 'Invalid password.');
+                }
+            } else {
+                isAdmin = false;
+                loginBtn.innerText = currentLang === 'ko' ? '로그인' : 'Admin Login';
+                loginBtn.classList.remove('btn-primary');
+                loginBtn.classList.add('btn-secondary');
+                passwordInput.style.display = 'block';
+            }
+            renderQuestions();
+        }
+
+        //        // 1. 방명록 추가
+        window.addGuestbook = async function() {
+            if (!user) return;
+            const nameEl = document.getElementById('gb-name');
+            const contentEl = document.getElementById('gb-content');
+
+            const name = nameEl.value.trim() || (currentLang === 'ko' ? '익명 방문자' : 'Anonymous Visitor');
+            const content = contentEl.value.trim();
+
+            if (!content) {
+                alert(currentLang === 'ko' ? '방명록 내용을 입력해주세요!' : 'Please enter guestbook content!');
+                return;
+            }
+
+            try {
+                // RULE 1: STRICT PATHS 사용
+                const gbColRef = collection(db, 'artifacts', appId, 'public', 'data', 'guestbook');
+                await addDoc(gbColRef, {
+                    name: name,
+                    content: content,
+                    timestamp: Date.now()
+                });
+
+                contentEl.value = '';
+                nameEl.value = '';
+            } catch (err) {
+                console.error("Failed to add guestbook:", err);
+            }
+        };
+
+        // 2. Q&A 추가
+        window.addQuestion = async function() {
+            if (!user) return;
+            const nameEl = document.getElementById('qa-name');
+            const contentEl = document.getElementById('qa-content');
+            const privateEl = document.getElementById('qa-private');
+
+            const name = nameEl.value.trim() || (currentLang === 'ko' ? '익명 질문자' : 'Anonymous Requester');
+            const content = contentEl.value.trim();
+            const isPrivate = privateEl.checked;
+
+            if (!content) {
+                alert(currentLang === 'ko' ? '질문 내용을 입력해주세요!' : 'Please enter question content!');
+                return;
+            }
+
+            try {
+                const qaColRef = collection(db, 'artifacts', appId, 'public', 'data', 'questions');
+                await addDoc(qaColRef, {
+                    name: name,
+                    content: content,
+                    isPrivate: isPrivate,
+                    authorSessionId: sessionVisitorId,
+                    reply: '',
+                    timestamp: Date.now()
+                });
+
+                contentEl.value = '';
+                nameEl.value = '';
+                privateEl.checked = false;
+            } catch (err) {
+                console.error("Failed to add question:", err);
+            }
+        };
+
+        // 3. 관리자 답글 등록
+        window.addReply = async function(docId) {
+            if (!isAdmin) return;
+            const replyInput = document.getElementById(`reply-input-${docId}`);
+            const replyText = replyInput.value.trim();
+
+            if (!replyText) {
+                alert(currentLang === 'ko' ? '답변을 적어주세요!' : 'Please enter reply content!');
+                return;
+            }
+
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'questions', docId);
+                await updateDoc(docRef, {
+                    reply: replyText
+                });
+            } catch (err) {
+                console.error("Failed to save reply:", err);
+            }
+        };
+
+        // 방명록 동적 렌더링
+        window.renderGuestbook = function() {
+            const listContainer = document.getElementById('gb-list');
+            listContainer.innerHTML = '';
+
+            if (guestbookData.length === 0) {
+                listContainer.innerHTML = `<div style="text-align:center; padding: 2rem; color:var(--text-secondary); font-size:0.95rem;">
+                    ${currentLang === 'ko' ? '첫 번째 방명록을 기재하고 응원을 남겨보세요!' : 'Be the first to leave a warm message!'}
+                </div>`;
+                return;
+            }
+
+            guestbookData.forEach(item => {
+                const date = new Date(item.timestamp).toLocaleString();
+                const div = document.createElement('div');
+                div.className = 'forum-item';
+                div.innerHTML = `
+                    <div class="forum-header">
+                        <span class="forum-author">${escapeHtml(item.name)}</span>
+                        <span>${date}</span>
+                    </div>
+                    <div class="forum-content">${escapeHtml(item.content)}</div>
+                `;
+                listContainer.appendChild(div);
+            });
+        };
+
+        // Q&A 동적 렌더링 (비공개 필터링 및 관리자 답변)
+        window.renderQuestions = function() {
+            const listContainer = document.getElementById('qa-list');
+            listContainer.innerHTML = '';
+
+            if (questionsData.length === 0) {
+                listContainer.innerHTML = `<div style="text-align:center; padding: 2rem; color:var(--text-secondary); font-size:0.95rem;">
+                    ${currentLang === 'ko' ? '등록된 질문이 없습니다. 궁금한 내용을 부담 없이 남겨주세요.' : 'No questions yet. Feel free to ask anything.'}
+                </div>`;
+                return;
+            }
+
+            questionsData.forEach(item => {
+                const date = new Date(item.timestamp).toLocaleString();
+                const div = document.createElement('div');
+                div.className = 'forum-item';
+
+                // 비공개 글 열람 권한 판별 (작성자 본인 세션 OR 관리자)
+                const isAuthor = item.authorSessionId === sessionVisitorId;
+                const canRead = !item.isPrivate || isAuthor || isAdmin;
+
+                let contentHtml = '';
+                if (canRead) {
+                    contentHtml = `
+                        ${item.isPrivate ? `<div class="forum-private-badge">🔒 [${currentLang === 'ko' ? '나만 보기 비공개' : 'Private'}]</div>` : ''}
+                        <div class="forum-content">${escapeHtml(item.content)}</div>
+                    `;
+                } else {
+                    contentHtml = `<div class="forum-content" style="color:var(--text-secondary); font-style:italic;">
+                        🔒 ${currentLang === 'ko' ? '비공개 질문입니다. (작성자와 관리자만 볼 수 있습니다)' : 'This is a private question.'}
+                    </div>`;
+                }
+
+                // 답변(댓글) 렌더링
+                let replyHtml = '';
+                if (item.reply) {
+                    replyHtml = `
+                        <div class="forum-reply-box">
+                            <div class="reply-author-tag">⚡ [DE. PORTFOLIO 답변]</div>
+                            <div class="forum-content" style="color: var(--color-primary);">${escapeHtml(item.reply)}</div>
+                        </div>
+                    `;
+                } else if (isAdmin) {
+                    replyHtml = `
+                        <div class="admin-action-row">
+                            <input type="text" id="reply-input-${item.id}" class="input-field" placeholder="${currentLang === 'ko' ? '여기에 답변 입력...' : 'Enter answer here...'}" style="flex: 1; padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                            <button class="btn btn-primary" onclick="addReply('${item.id}')" style="padding: 0.4rem 1rem; font-size: 0.85rem;">${currentLang === 'ko' ? '답변 등록' : 'Reply'}</button>
+                        </div>
+                    `;
+                }
+
+                div.innerHTML = `
+                    <div class="forum-header">
+                        <span class="forum-author">${escapeHtml(item.name)}</span>
+                        <span>${date}</span>
+                    </div>
+                    ${contentHtml}
+                    ${replyHtml}
+                `;
+                listContainer.appendChild(div);
+            });
+        };
+
+        // 안전한 HTML 이스케이프
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;');
+        }
+
+        // 인증 흐름 및 실시간 데이터 바인딩
+        window.addEventListener('load', async () => {
+            initCharts();
+
+            // RULE 3 - AUTH BEFORE QUERIES
+            try {
+                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (token) {
+                    await signInWithCustomToken(auth, token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Auth failed:", err);
+                try {
+                    await signInAnonymously(auth);
+                } catch (anonErr) {
+                    console.error("Anonymous authentication fatal error:", anonErr);
+                }
+            }
+
+            onAuthStateChanged(auth, (currentUser) => {
+                user = currentUser;
+                if (user) {
+                    userId = user.uid;
+
+                    // RULE 2: 복잡 쿼리 배제, 로컬 인메모리 정렬
+                    const gbColRef = collection(db, 'artifacts', appId, 'public', 'data', 'guestbook');
+                    onSnapshot(gbColRef, (snapshot) => {
+                        const tempArr = [];
+                        snapshot.forEach(doc => {
+                            tempArr.push({ id: doc.id, ...doc.data() });
+                        });
+                        // 로컬 메모리 소팅 (최신순)
+                        tempArr.sort((a, b) => b.timestamp - a.timestamp);
+                        guestbookData = tempArr;
+                        renderGuestbook();
+                    }, (err) => {
+                        console.error("Guestbook subscription error:", err);
+                    });
+
+                    const qaColRef = collection(db, 'artifacts', appId, 'public', 'data', 'questions');
+                    onSnapshot(qaColRef, (snapshot) => {
+                        const tempArr = [];
+                        snapshot.forEach(doc => {
+                            tempArr.push({ id: doc.id, ...doc.data() });
+                        });
+                        tempArr.sort((a, b) => b.timestamp - a.timestamp);
+                        questionsData = tempArr;
+                        renderQuestions();
+                    }, (err) => {
+                        console.error("Questions subscription error:", err);
+                    });
+                }
+            });
         });
     </script>
 </body>
