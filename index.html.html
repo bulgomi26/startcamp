@@ -12,14 +12,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-main: #060811;        /* 깊은 우주의 Void Black */
-            --bg-card: rgba(15, 22, 38, 0.75); /* 우주선 제어판 느낌의 반투명 짙은 네이비 */
+            --bg-main: #030408;        /* 극도의 딥 블랙 우주 배경 */
+            --bg-card: rgba(15, 23, 42, 0.65); /* 투과성 글래스모피즘 우주선 제어판 */
             --text-primary: #f8fafc;   /* 스탈라 화이트 */
-            --text-secondary: #94a3b8; /* 성운 회색 */
-            --color-primary: #38bdf8;  /* 형광 사이언 */
-            --color-accent: #06b6d4;   /* 사이버 블루 */
+            --text-secondary: #94a3b8; /* 은하 회색 */
+            --color-primary: #38bdf8;  /* 사이언 스타라이트 */
+            --color-accent: #06b6d4;   /* 네온 블루 */
             --color-accent-hover: #0891b2;
-            --border-color: rgba(255, 255, 255, 0.08); /* 극도로 미세한 별빛 경계선 */
+            --border-color: rgba(255, 255, 255, 0.06); /* 극미세 성운 테두리 */
             --header-height: 70px;     
         }
 
@@ -39,54 +39,62 @@
             background-color: var(--bg-main);
             color: var(--text-primary);
             line-height: 1.6;
-            overflow-x: hidden; /* 패럴랙스 성운 블롭들이 화면 밖으로 확장 시 가로 스크롤 방지 */
+            overflow-x: hidden; /* 가로 스크롤바 방지 */
             position: relative;
         }
 
-        /* 우주 성운 1: 사이언 클라우드 */
+        #space-bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1; /* 모든 콘텐츠의 최하단 배경에 배치 */
+            pointer-events: none;
+        }
+
+        /* 몽환적인 3색 유기적 성운 클라우드 */
         .decor-blob {
             position: absolute;
             border-radius: 50%;
             filter: blur(140px);
             z-index: 0;
             pointer-events: none;
-            opacity: 0.22;
+            opacity: 0.15; /* 우주 테두리와 조화롭게 차분한 광원 연출 */
             will-change: transform;
-            transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .decor-blob-1 {
-            width: 550px;
-            height: 550px;
+            width: 600px;
+            height: 600px;
             background: radial-gradient(circle, var(--color-accent) 0%, rgba(6,182,212,0) 70%);
-            top: 25%;
-            right: -150px;
+            top: 15%;
+            right: -100px;
         }
 
-        /* 우주 성운 2: 딥 블루 오리온 */
         .decor-blob-2 {
-            width: 700px;
-            height: 700px;
+            width: 750px;
+            height: 750px;
             background: radial-gradient(circle, #1e40af 0%, rgba(30,64,175,0) 70%);
-            top: 60%;
-            left: -250px;
+            top: 55%;
+            left: -200px;
         }
 
-        /* 우주 성운 3: 초신성 퍼플 플레어 */
         .decor-blob-3 {
             position: absolute;
-            width: 500px;
-            height: 500px;
+            width: 550px;
+            height: 550px;
             background: radial-gradient(circle, #a855f7 0%, rgba(168,85,247,0) 70%);
-            top: 100%;
-            right: -100px;
+            top: 110%;
+            right: -50px;
             border-radius: 50%;
             filter: blur(150px);
             z-index: 0;
             pointer-events: none;
-            opacity: 0.15;
+            opacity: 0.1;
             will-change: transform;
-            transition: transform 0.18s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         header {
@@ -95,14 +103,14 @@
             left: 0;
             width: 100%;
             height: var(--header-height);
-            background-color: rgba(6, 8, 17, 0.85); /* 다크 우주 투과형 헤더 */
+            background-color: rgba(3, 4, 8, 0.85); /* 다크 우주 투과형 헤더 */
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 2rem;
             z-index: 1000;
-            backdrop-filter: blur(12px); /* 뒤에 지나가는 성운을 은은하게 뭉개줌 */
+            backdrop-filter: blur(12px); /* 뒤로 움직이는 성운과 별을 신비롭게 뭉갬 */
         }
 
         .logo {
@@ -176,7 +184,7 @@
 
         .lang-btn.active {
             background-color: var(--color-accent);
-            color: #060811;
+            color: #030408;
             box-shadow: 0 0 12px rgba(6, 182, 212, 0.5);
             font-weight: 700;
         }
@@ -186,7 +194,7 @@
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
-            z-index: 10; /* 성운들 위에 띄움 */
+            z-index: 10; /* 은하수 배경 위에 고정 배치 */
         }
 
         .section-title {
@@ -210,7 +218,6 @@
             box-shadow: 0 0 8px var(--color-accent);
         }
 
-        /* 히어로 테크 디자인 */
         #hero {
             height: calc(100vh - var(--header-height)); 
             margin-top: var(--header-height);          
@@ -220,7 +227,7 @@
             align-items: flex-start;
             position: relative;
             overflow: hidden;
-            background: radial-gradient(circle at 30% 50%, #0d1527 0%, #060811 100%);
+            background: radial-gradient(circle at 30% 50%, #0d1527 0%, #030408 100%);
             color: #ffffff;
             width: 100%;
             max-width: none;
@@ -265,7 +272,7 @@
 
         .btn-primary {
             background-color: var(--color-accent);
-            color: #060811;
+            color: #030408;
             border: 1px solid var(--color-accent);
             box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
         }
@@ -288,17 +295,6 @@
             background-color: rgba(255, 255, 255, 0.08);
             border-color: #ffffff;
             transform: translateY(-2px);
-        }
-
-        #hero-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 120%; /* 패럴랙스 하단 보정용 세로 연장 */
-            z-index: 1;
-            opacity: 0.45; /* 검은 배경에서 캔버스 라인이 더 잘 보이도록 투명도 최적화 */
-            will-change: transform;
         }
 
         .grid-container {
@@ -355,7 +351,7 @@
             border-radius: 12px;
             padding: 2.5rem; 
             box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px); /* 카드 뒤로 성운 흐름 통과 효과 */
+            backdrop-filter: blur(8px); /* 카드 뒤로 성운과 별이 흐르는 투과 효과 */
             transition: border 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -449,6 +445,9 @@
 </head>
 <body>
 
+    <!-- 화면 맨 뒤에 장착되어 층별 패럴랙스를 수행하는 고정형 캔버스입니다. -->
+    <canvas id="space-bg-canvas"></canvas>
+
     <div class="decor-blob decor-blob-1"></div>
     <div class="decor-blob decor-blob-2"></div>
     <div class="decor-blob decor-blob-3"></div>
@@ -476,7 +475,6 @@
 
     <!-- 1) Hero 섹션 -->
     <section id="hero">
-        <canvas id="hero-canvas"></canvas>
         <h1 data-i18n="hero-title">물리적 한계를 넘어<br><span style="color: var(--color-accent); text-shadow: 0 0 15px rgba(6,182,212,0.5);">AI로 가속하다</span></h1>
         <p data-i18n="hero-desc">현장의 도메인 지식을 이해하고, 노이즈 가득한 실전 데이터 속에서 의미 있는 가치를 정제하여 기업의 수율 개선을 이끄는 신소재 출신 데이터 엔지니어입니다.</p>
         
@@ -685,60 +683,116 @@
             updateChartsLang(lang);
         }
 
-        // 1. Hero 배경 Canvas 애니메이션 (격자 구조 및 실시간 데이터 노드 형성)
-        const canvas = document.getElementById('hero-canvas');
-        const ctx = canvas.getContext('2d');
+        const spaceCanvas = document.getElementById('space-bg-canvas');
+        const sCtx = spaceCanvas.getContext('2d');
 
-        function resizeCanvas() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+        function resizeSpaceCanvas() {
+            spaceCanvas.width = window.innerWidth;
+            spaceCanvas.height = window.innerHeight;
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        resizeSpaceCanvas();
+        window.addEventListener('resize', resizeSpaceCanvas);
 
-        const points = [];
-        const maxPoints = 40;
+        // 3D 공간 연출용 트리플 레이어 구조체
+        const spaceLayers = [
+            // Layer 1: 원경 은하 먼지 (120개, 매우 작고 흐리며 최저속 이동)
+            { count: 120, sizeMin: 0.3, sizeMax: 1.0, parallax: 0.05, baseAlpha: 0.2, color: '#ffffff', points: [] },
+            // Layer 2: 중경 무리성단 (60개, 푸른빛, 중간 크기 및 중간 속도)
+            { count: 60, sizeMin: 1.0, sizeMax: 2.0, parallax: 0.15, baseAlpha: 0.4, color: '#38bdf8', points: [] },
+            // Layer 3: 근경 주성단 및 성단망 (20개, 밝은 블루네온, 고속 이동 및 탐지선 그리드 작동)
+            { count: 20, sizeMin: 2.0, sizeMax: 3.2, parallax: 0.35, baseAlpha: 0.6, color: '#06b6d4', points: [] }
+        ];
 
-        for (let i = 0; i < maxPoints; i++) {
-            points.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 1,
-                vy: (Math.random() - 0.5) * 1
-            });
-        }
+        // 각 레이어에 은하 좌표 분배
+        spaceLayers.forEach(layer => {
+            for (let i = 0; i < layer.count; i++) {
+                layer.points.push({
+                    x: Math.random(), // 가로 비율 좌표 (0~1)
+                    y: Math.random(), // 세로 비율 좌표 (0~1)
+                    vx: (Math.random() - 0.5) * 0.0001, // 유기적인 아주 미세한 유동속도
+                    vy: (Math.random() - 0.5) * 0.0001,
+                    phase: Math.random() * Math.PI * 2, // 반짝임 시작 각도
+                    twinkleSpeed: 0.01 + Math.random() * 0.02 // 반짝이는 속도
+                });
+            }
+        });
 
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = 'rgba(6, 182, 212, 0.2)'; // 어두운 하늘에 더 선명히 대비되도록 투명도 조정
-            ctx.fillStyle = 'rgba(6, 182, 212, 0.4)';
+        let currentScrollY = 0;
 
-            points.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
+        function runSpaceEngine() {
+            sCtx.clearRect(0, 0, spaceCanvas.width, spaceCanvas.height);
+            
+            // 실시간 스크롤 감지값 적용
+            currentScrollY = window.scrollY;
 
-                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            // 트리플 우주망 레이어 개별 렌더링
+            spaceLayers.forEach((layer) => {
+                sCtx.fillStyle = layer.color;
 
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-                ctx.fill();
-            });
+                layer.points.forEach(p => {
+                    // 유기적인 미세 움직임 누적
+                    p.x += p.vx;
+                    p.y += p.vy;
 
-            for (let i = 0; i < points.length; i++) {
-                for (let j = i + 1; j < points.length; j++) {
-                    const dist = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
-                    if (dist < 120) {
-                        ctx.beginPath();
-                        ctx.moveTo(points[i].x, points[i].y);
-                        ctx.lineTo(points[j].x, points[j].y);
-                        ctx.stroke();
+                    // 화면 경계 이탈 시 랩어라운드 순환
+                    if (p.x < 0) p.x += 1; if (p.x > 1) p.x -= 1;
+                    if (p.y < 0) p.y += 1; if (p.y > 1) p.y -= 1;
+
+                    // 실제 화면 속 가로/세로 픽셀 계산
+                    const px = p.x * spaceCanvas.width;
+                    
+                    // 패럴랙스 물리 연산: (기본 세로좌표 - 스크롤 오프셋 * 레이어 가중치) % 화면 높이
+                    let py = (p.y * spaceCanvas.height - (currentScrollY * layer.parallax)) % spaceCanvas.height;
+                    if (py < 0) py += spaceCanvas.height; // 위아래 무한 연동 보정
+
+                    // 삼각함수를 활용한 아름다운 밤하늘 별 반짝임 연출
+                    p.phase += p.twinkleSpeed;
+                    const brightness = layer.baseAlpha + Math.sin(p.phase) * (layer.baseAlpha * 0.5);
+
+                    sCtx.beginPath();
+                    sCtx.globalAlpha = Math.max(0.1, Math.min(1, brightness));
+                    
+                    // 별 형상 원형 렌더링
+                    const r = layer.sizeMin + (layer.sizeMax - layer.sizeMin) * ((Math.sin(p.phase) + 1) / 2);
+                    sCtx.arc(px, py, r, 0, Math.PI * 2);
+                    sCtx.fill();
+                });
+
+                // Layer 3 (근경 성단)에만 미래지향적인 별자리 데이터 링크망 그리기
+                if (layer.parallax === 0.35) {
+                    sCtx.strokeStyle = 'rgba(6, 182, 212, 0.08)'; // 은은한 형광 블루 연결망
+                    sCtx.lineWidth = 1;
+
+                    for (let i = 0; i < layer.points.length; i++) {
+                        const pi = layer.points[i];
+                        const pix = pi.x * spaceCanvas.width;
+                        let piy = (pi.y * spaceCanvas.height - (currentScrollY * layer.parallax)) % spaceCanvas.height;
+                        if (piy < 0) piy += spaceCanvas.height;
+
+                        for (let j = i + 1; j < layer.points.length; j++) {
+                            const pj = layer.points[j];
+                            const pjx = pj.x * spaceCanvas.width;
+                            let pjy = (pj.y * spaceCanvas.height - (currentScrollY * layer.parallax)) % spaceCanvas.height;
+                            if (pjy < 0) pjy += spaceCanvas.height;
+
+                            // 별과 별 사이의 거리가 150px 이내일 때 연결선 가동
+                            const dist = Math.hypot(pix - pjx, piy - pjy);
+                            if (dist < 150) {
+                                sCtx.beginPath();
+                                sCtx.globalAlpha = (1 - (dist / 150)) * 0.2; // 거리에 비례해 페이드아웃
+                                sCtx.moveTo(pix, piy);
+                                sCtx.lineTo(pjx, pjy);
+                                sCtx.stroke();
+                            }
+                        }
                     }
                 }
-            }
-            requestAnimationFrame(animate);
+            });
+
+            sCtx.globalAlpha = 1.0; // 투명도 원복 복원
+            requestAnimationFrame(runSpaceEngine);
         }
-        animate();
+        runSpaceEngine();
 
         let problemChartInstance;
         let yieldChartInstance;
@@ -756,8 +810,8 @@
                     labels: [translations[currentLang]['chart-problem-clean'], translations[currentLang]['chart-problem-lost']],
                     datasets: [{
                         data: [18, 82],
-                        backgroundColor: ['#06b6d4', '#1e293b'],
-                        borderColor: '#0f172a',
+                        backgroundColor: ['#06b6d4', '#1e2238'],
+                        borderColor: '#0b0f19',
                         borderWidth: 2
                     }]
                 },
@@ -839,25 +893,19 @@
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY;
 
-            // 1) 히어로 네트워킹 격자선: 스크롤 속도의 40%로 느리게 연동하여 깊이감 형성
-            const heroCanvas = document.getElementById('hero-canvas');
-            if (heroCanvas) {
-                heroCanvas.style.transform = `translateY(${scrolled * 0.4}px)`;
-            }
-
-            // 2) 우주 성운 1 (Cyan): 스크롤 역방향(-15%) 작동
+            // 1) 우주 성운 1 (Cyan): 스크롤 역방향(-15%) 작동
             const blob1 = document.querySelector('.decor-blob-1');
             if (blob1) {
                 blob1.style.transform = `translateY(${scrolled * -0.15}px)`;
             }
 
-            // 3) 우주 성운 2 (Blue): 스크롤 순방향(+12%) 작동
+            // 2) 우주 성운 2 (Blue): 스크롤 순방향(+12%) 작동
             const blob2 = document.querySelector('.decor-blob-2');
             if (blob2) {
                 blob2.style.transform = `translateY(${scrolled * 0.12}px)`;
             }
 
-            // 4) 우주 성운 3 (Purple): 스크롤 역방향(-10%) 작동으로 상호 교차 입체감 형성
+            // 3) 우주 성운 3 (Purple): 스크롤 역방향(-10%) 작동으로 입체적인 유동 형태 유지
             const blob3 = document.querySelector('.decor-blob-3');
             if (blob3) {
                 blob3.style.transform = `translateY(${scrolled * -0.1}px)`;
