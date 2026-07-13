@@ -111,7 +111,7 @@
             transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* [수정] 상단 네비게이션 헤더 및 수평 센터 매칭 */
+        /* 상단 네비게이션 헤더 및 수평 센터 매칭 */
         header {
             position: fixed;
             top: 0;
@@ -203,7 +203,7 @@
             font-weight: 700;
         }
 
-        /* [수정] 모바일 튀어나감 방지 그리드 및 반응형 구조화 */
+        /* 모바일 튀어나감 방지 그리드 및 반응형 구조화 */
         section {
             padding: 100px 2rem; 
             max-width: 1200px;
@@ -337,23 +337,28 @@
                 justify-content: center;
             }
             #hero {
-                padding: 0 1.5rem;
+                padding: 5rem 1.5rem;
                 height: auto;
-                padding-top: 5rem;
-                padding-bottom: 5rem;
+                align-items: center;     /* 모바일 디바이스에서 수평 정중앙 정렬 */
+                text-align: center;       /* 텍스트 내용 전체 중앙정렬 */
             }
             #hero h1 {
                 font-size: 2.2rem;
             }
             #hero p {
                 font-size: 1.1rem;
+                margin-left: auto;
+                margin-right: auto;
             }
             .hero-buttons {
                 flex-direction: column;
                 width: 100%;
+                justify-content: center;
+                align-items: center;
             }
             .btn {
                 width: 100%;
+                max-width: 320px;
             }
             section {
                 padding: 60px 1.25rem;
@@ -410,7 +415,6 @@
 
         .pipeline-container {
             display: grid;
-            grid-template-columns: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
             margin-top: 1rem;
@@ -547,13 +551,12 @@
             accent-color: var(--color-accent);
         }
 
-        /* [수정] 방명록/Q&A 내부 스크롤 및 갇히는 위아래 움직임 전면 제거 */
+        /* 방명록/Q&A 내부 스크롤 및 갇히는 현상 제거 */
         .forum-list {
             margin-top: 2rem;
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            /* max-height 및 overflow-y 속성을 지워 본문과 함께 평평하게 전개되도록 함 */
         }
 
         .forum-item {
@@ -718,22 +721,15 @@
     </style>
 </head>
 <body>
-```
-eof
 
-```html:데이터 엔지니어 포트폴리오:portfolio_spa.html
-<!-- ... existing code ... -->
-<body>
-
-    <!-- 화면 맨 뒤에 장착되어 층별 패럴랙스를 수행하는 고정형 캔버스입니다. -->
+    <!-- 화면 전체 배경 패럴랙스 캔버스 -->
     <canvas id="space-bg-canvas"></canvas>
 
-    <!-- [복구] 몽환적인 3색 유기적 성운 클라우드 공간 복원 -->
+    <!-- 배경용 유기적 성운 클라우드 블롭 -->
     <div class="decor-blob decor-blob-1"></div>
     <div class="decor-blob decor-blob-2"></div>
     <div class="decor-blob decor-blob-3"></div>
 
-    <!-- 네비게이션 헤더 -->
     <header>
         <div class="logo">DE. PORTFOLIO</div>
         <div class="nav-container">
@@ -748,7 +744,7 @@ eof
                     <li><a href="#contact" data-i18n="nav-contact">연락하기</a></li>
                 </ul>
             </nav>
-            <!-- 다국어 캡슐 버튼 -->
+            <!-- 다국어 선택 캡슐 버튼 -->
             <div class="lang-switch">
                 <button class="lang-btn active" onclick="setLanguage('ko')">KO</button>
                 <button class="lang-btn" onclick="setLanguage('en')">EN</button>
@@ -774,7 +770,7 @@ eof
             <div class="card">
                 <h3 data-i18n="problem-card1-title">제조 현장의 원천 데이터 유실 실태</h3>
                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="problem-card1-desc">도메인을 모르는 상태에서 수집되는 데이터는 노이즈가 심해 80% 이상이 정제되지 못하고 버려집니다. 저는 이 문제를 공학적 직관으로 해결합니다.</p>
-                <!-- [복구] 원천 데이터 유실 차트 복원 -->
+                <!-- 원천 데이터 유실 파이 차트 영역 -->
                 <div style="position: relative; height:250px; width:100%">
                     <canvas id="problemChart"></canvas>
                 </div>
@@ -826,7 +822,7 @@ eof
             </div>
             <div class="card">
                 <h3 data-i18n="strengths-card2-title">엔지니어링 도입 전후 공정 수율 변화 (시뮬레이션)</h3>
-                <!-- [복구] 수율 개선 변화 차트 복원 -->
+                <!-- 수율 개선 결과 라인 차트 영역 -->
                 <div style="position: relative; height:250px; width:100%">
                     <canvas id="yieldChart"></canvas>
                 </div>
@@ -852,7 +848,7 @@ eof
                 <button class="btn btn-primary" onclick="addGuestbook()" data-i18n="btn-submit">등록하기</button>
 
                 <div class="forum-list" id="gb-list">
-                    <!-- 스크립트로 렌더링 (스크롤바 없이 평평하게 펼쳐짐) -->
+                    <!-- 스크립트로 동적 렌더링 (외부 스크롤바 없이 평평하게 펼쳐짐) -->
                 </div>
             </div>
 
@@ -869,10 +865,10 @@ eof
                 <button class="btn btn-primary" onclick="addQuestion()" data-i18n="btn-submit">등록하기</button>
 
                 <div class="forum-list" id="qa-list">
-                    <!-- 스크립트로 렌더링 (스크롤바 없이 평평하게 펼쳐짐) -->
+                    <!-- 스크립트로 동적 렌더링 -->
                 </div>
 
-                <!-- 테스트용 관리자 전환 모듈 -->
+                <!-- 테스트용 관리자 로그인 패널 -->
                 <div class="admin-login-bar">
                     <div>
                         <span style="font-weight: 700; color: var(--color-accent);" data-i18n="admin-test-title">💡 관리자 모드 시뮬레이션:</span>
@@ -950,11 +946,7 @@ eof
             <div class="contact-info"><span data-i18n="contact-github">GitHub</span>: <span>github.com/youridentity</span></div>
         </div>
     </section>
-```
-eof
 
-```html:데이터 엔지니어 포트폴리오:portfolio_spa.html
-<!-- ... existing code ... -->
     <script>
         const translations = {
             ko: {
@@ -1170,7 +1162,6 @@ eof
     </script>
 
     <script>
-        // [복구] 우주 은하계 패럴랙스 엔진 캔버스 로직 복원
         const spaceCanvas = document.getElementById('space-bg-canvas');
         const sCtx = spaceCanvas.getContext('2d');
 
@@ -1181,12 +1172,14 @@ eof
         resizeSpaceCanvas();
         window.addEventListener('resize', resizeSpaceCanvas);
 
+        // 3단 패럴랙스 레이어 데이터 구조 정의
         const spaceLayers = [
             { count: 120, sizeMin: 0.3, sizeMax: 1.0, parallax: 0.05, baseAlpha: 0.2, color: '#ffffff', points: [] },
             { count: 60, sizeMin: 1.0, sizeMax: 2.0, parallax: 0.15, baseAlpha: 0.4, color: '#38bdf8', points: [] },
             { count: 20, sizeMin: 2.0, sizeMax: 3.2, parallax: 0.35, baseAlpha: 0.6, color: '#06b6d4', points: [] }
         ];
 
+        // 좌표계 별자리 데이터 초기화
         spaceLayers.forEach(layer => {
             for (let i = 0; i < layer.count; i++) {
                 layer.points.push({
@@ -1210,9 +1203,11 @@ eof
                 sCtx.fillStyle = layer.color;
 
                 layer.points.forEach(p => {
+                    // 미세 움직임 누적
                     p.x += p.vx;
                     p.y += p.vy;
 
+                    // 랩어라운드 루프 보안 처리
                     if (p.x < 0) p.x += 1; if (p.x > 1) p.x -= 1;
                     if (p.y < 0) p.y += 1; if (p.y > 1) p.y -= 1;
 
@@ -1220,6 +1215,7 @@ eof
                     let py = (p.y * spaceCanvas.height - (currentScrollY * layer.parallax)) % spaceCanvas.height;
                     if (py < 0) py += spaceCanvas.height; 
 
+                    // 은은한 개별 밤하늘 트윙클
                     p.phase += p.twinkleSpeed;
                     const brightness = layer.baseAlpha + Math.sin(p.phase) * (layer.baseAlpha * 0.5);
 
@@ -1231,6 +1227,7 @@ eof
                     sCtx.fill();
                 });
 
+                // 근경 별자리 간 흐릿한 신경망 파이프라인 격자선 연결
                 if (layer.parallax === 0.35) {
                     sCtx.strokeStyle = 'rgba(6, 182, 212, 0.08)'; 
                     sCtx.lineWidth = 1;
@@ -1350,6 +1347,7 @@ eof
             }
         }
 
+        // 스크롤 시 성운 클라우드 블롭 흐름 제어
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY;
 
@@ -1369,11 +1367,7 @@ eof
             }
         });
     </script>
-```
-eof
 
-```html:데이터 엔지니어 포트폴리오:portfolio_spa.html
-<!-- ... existing code ... -->
     <script type="module">
         const { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, getFirestore, doc, setDoc, updateDoc, collection, onSnapshot, addDoc, query } = window.firebaseImports;
 
@@ -1395,6 +1389,7 @@ eof
         let userId = '';
         let isAdmin = false;
 
+        // 브라우저 로컬 식별 정보 획득 및 갱신
         let sessionVisitorId = localStorage.getItem('de_portfolio_session_v_id');
         if (!sessionVisitorId) {
             sessionVisitorId = 'v_' + Math.random().toString(36).substring(2, 15);
@@ -1404,6 +1399,7 @@ eof
         let guestbookData = [];
         let questionsData = [];
 
+        // 관리자 인증 처리 루틴
         window.toggleAdminMode = function() {
             const passwordInput = document.getElementById('admin-password');
             const loginBtn = document.getElementById('admin-login-btn');
@@ -1429,6 +1425,7 @@ eof
             renderQuestions();
         }
 
+        // 방명록 기재 등록 처리
         window.addGuestbook = async function() {
             if (!user) return;
             const nameEl = document.getElementById('gb-name');
@@ -1457,6 +1454,7 @@ eof
             }
         };
 
+        // 1:1 비밀 질문 기재 처리
         window.addQuestion = async function() {
             if (!user) return;
             const nameEl = document.getElementById('qa-name');
@@ -1491,6 +1489,7 @@ eof
             }
         };
 
+        // 질문 피드백 댓글(관리자 전용)
         window.addReply = async function(docId) {
             if (!isAdmin) return;
             const replyInput = document.getElementById(`reply-input-${docId}`);
@@ -1511,6 +1510,7 @@ eof
             }
         };
 
+        // 방명록 뷰포트 렌더러
         window.renderGuestbook = function() {
             const listContainer = document.getElementById('gb-list');
             listContainer.innerHTML = '';
@@ -1537,6 +1537,7 @@ eof
             });
         };
 
+        // Q&A 뷰포트 렌더러 (비밀글 필터 가드 레일 작동)
         window.renderQuestions = function() {
             const listContainer = document.getElementById('qa-list');
             listContainer.innerHTML = '';
@@ -1606,6 +1607,7 @@ eof
                       .replace(/'/g, '&#039;');
         }
 
+        // 마운트 시 데이터 취득 파이프라인 개방
         window.addEventListener('load', async () => {
             initCharts();
 
@@ -1630,6 +1632,7 @@ eof
                 if (user) {
                     userId = user.uid;
 
+                    // 실시간 방명록 구독
                     const gbColRef = collection(db, 'artifacts', appId, 'public', 'data', 'guestbook');
                     onSnapshot(gbColRef, (snapshot) => {
                         const tempArr = [];
@@ -1643,6 +1646,7 @@ eof
                         console.error("Guestbook subscription error:", err);
                     });
 
+                    // 실시간 1:1 Q&A 구독
                     const qaColRef = collection(db, 'artifacts', appId, 'public', 'data', 'questions');
                     onSnapshot(qaColRef, (snapshot) => {
                         const tempArr = [];
@@ -1661,4 +1665,3 @@ eof
     </script>
 </body>
 </html>
-```
